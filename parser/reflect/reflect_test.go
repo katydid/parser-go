@@ -18,7 +18,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/katydid/validator-go/parser/debug"
+	"github.com/katydid/parser-go/parser/debug"
 )
 
 func TestDebug(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/katydid/validator-go
+module github.com/katydid/parser-go
 
 go 1.23
 

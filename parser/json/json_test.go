@@ -18,8 +18,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/katydid/validator-go/parser/debug"
-	sjson "github.com/katydid/validator-go/parser/json"
+	"github.com/katydid/parser-go/parser/debug"
+	sjson "github.com/katydid/parser-go/parser/json"
 )
 
 func TestDebug(t *testing.T) {

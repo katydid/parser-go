@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/katydid/validator-go/parser"
+	"github.com/katydid/parser-go/parser"
 )
 
 // YamlParser is a parser for YAML
