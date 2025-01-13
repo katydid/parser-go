@@ -9,7 +9,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        path: gopath/github.com/katydid/validator-go
+        path: gopath/github.com/katydid/parser-go
     - name: Checkout testsuite
       uses: actions/checkout@v4
       with:
@@ -21,39 +21,29 @@ jobs:
         go-version: 1.23
     - name: Fetch dependencies
       run: |
-        cd gopath/github.com/katydid/validator-go
+        cd gopath/github.com/katydid/parser-go
         go mod download -x
     - name: Install tools
       run: |
-        cd gopath/github.com/katydid/validator-go
-        go install -x github.com/goccmack/gocc
-        go install -x github.com/awalterschulze/goderive
+        cd gopath/github.com/katydid/parser-go
         go install -x github.com/awalterschulze/checklicense
     - name: env
       run: env && go env && pwd
     - name: tree
       run: tree
-    - name: Generate
-      run: |
-        cd gopath/github.com/katydid/validator-go
-        PATH=$HOME/bin:$PATH make regenerate
     - name: Build
       run: |
-        cd gopath/github.com/katydid/validator-go
+        cd gopath/github.com/katydid/parser-go
         make build
     - name: Test
       run: |
-        cd gopath/github.com/katydid/validator-go
+        cd gopath/github.com/katydid/parser-go
         make test
-    - name: Vet
-      run: |
-        cd gopath/github.com/katydid/validator-go
-        make vet
     - name: Checklicencse
       run: |
-        cd gopath/github.com/katydid/validator-go
+        cd gopath/github.com/katydid/parser-go
         make checklicense
     - name: Diff
       run: |
-        cd gopath/github.com/katydid/validator-go
+        cd gopath/github.com/katydid/parser-go
         make diff
