@@ -17,6 +17,8 @@ This includes tools for developing implementations of the parser interface, for 
 If you want to use a parser for you own use case, here is a simple walk function:
 
 ```go
+import "github.com/katydid/parser-go/parser"
+
 func walk(p parser.Interface) {
     for {
         if err := p.Next(); err != nil {
@@ -26,7 +28,7 @@ func walk(p parser.Interface) {
                 panic(err)
             }
         }
-        value := print(p.(parser.Value))
+        value := print(p)
         if !p.IsLeaf() {
             p.Down()
             walk(p)
