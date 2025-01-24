@@ -48,19 +48,30 @@ The katydid validator supports validating any serialization format that implemen
 
 ```go
 type Interface interface {
+    // Next skips to the next field or item in an array
     Next() error
+    // IsLeaf is true if this is a value and you cannot traverse down anymore
     IsLeaf() bool
-    Up()
+    // Down traverses down into a field value, which could be another message or array. Next must always be called after Down.
     Down()
+    // Up traverses up out of a field value and back to the field's next sibling. Next must always be called after Up.
+    Up()
+    // Value is a collection of possible values that the field might have.
     Value
 }
 
 type Value interface {
-    Double() (float64, error)
-    Int() (int64, error)
-    Uint() (uint64, error)
-    Bool() (bool, error)
+    // String returns the string value if it is a string type or an error if it is not a string.
     String() (string, error)
+    // Double returns the float64 value if it is a double type or an error if it is not a double.
+    Double() (float64, error)
+    // Int returns the int64 value if it is an integer type or an error if it is not an integer.
+    Int() (int64, error)
+    // Uint returns the uint64 value if it is an unsinged integer type or an error if it is not an unsinged integer.
+    Uint() (uint64, error)
+    // Bool returns the bool value if it is a boolean type or an error if it is not a boolean.
+    Bool() (bool, error)
+    // Bytes returns a byte slice value if it is a bytes type or an error if it is not bytes.
     Bytes() ([]byte, error)
 }
 ```
