@@ -14,6 +14,59 @@
 
 package debug
 
+import "strings"
+
+// Node is a type that represents a node in a tree.
+// It has a label an children nodes.
+type Node struct {
+	Label    string
+	Children Nodes
+}
+
+// String returns a string representation of Node.
+func (n Node) String() string {
+	if len(n.Children) == 0 {
+		return n.Label
+	}
+	return n.Label + ":" + n.Children.String()
+}
+
+// Equal returns whether two Nodes are the same.
+func (n Node) Equal(m Node) bool {
+	if n.Label != m.Label {
+		return false
+	}
+	if !n.Children.Equal(m.Children) {
+		return false
+	}
+	return true
+}
+
+// Nodes is a list of Node.
+type Nodes []Node
+
+// String returns a string representation of Nodes.
+func (n Nodes) String() string {
+	ss := make([]string, len(n))
+	for i := range n {
+		ss[i] = n[i].String()
+	}
+	return "{" + strings.Join(ss, ",") + "}"
+}
+
+// Equal returns whether two Node lists are equal.
+func (n Nodes) Equal(m Nodes) bool {
+	if len(n) != len(m) {
+		return false
+	}
+	for i := range n {
+		if !n[i].Equal(m[i]) {
+			return false
+		}
+	}
+	return true
+}
+
 // Field is a helper function for creating a Node with a label and one child label.
 // This is how a field with a value is typically represented.
 func Field(name string, value string) Node {
