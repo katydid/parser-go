@@ -144,11 +144,9 @@ func (l *l) IsLeaf() bool {
 func (l *l) Up() {
 	l.s.Up()
 	l.l.Printf(l.name + ".Up()")
-	return
 }
 
 func (l *l) Down() {
 	l.s.Down()
 	l.l.Printf(l.name + ".Down()")
-	return
 }

@@ -15,7 +15,9 @@
 // Package parser represents the parser.Interface and some errors for implementing parsers.
 package parser
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // A type conforming to the parser.Interface interface, abstracts away the implementation details of a parser.
 type Interface interface {
@@ -51,35 +53,41 @@ type Value interface {
 
 // Sprint returns a value printed as a string.
 func Sprint(value Value) string {
-	return fmt.Sprintf("%#v", getValue(value))
+	v, err := GetValue(value)
+	if err != nil {
+		return fmt.Sprintf("error:<%v>", err)
+	}
+	return fmt.Sprintf("%#v", v)
 }
 
-func getValue(value Value) interface{} {
+// GetValue returns the current value, by trying the most specific to least specific type.
+// It tries uint before double and string before bytes.
+func GetValue(p Value) (interface{}, error) {
 	var v interface{}
 	var err error
-	v, err = value.Bool()
+	v, err = p.Bool()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	v, err = value.Bytes()
+	v, err = p.Int()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	v, err = value.String()
+	v, err = p.Uint()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	v, err = value.Int()
+	v, err = p.Double()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	v, err = value.Uint()
+	v, err = p.String()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	v, err = value.Double()
+	v, err = p.Bytes()
 	if err == nil {
-		return v
+		return v, nil
 	}
-	return nil
+	return nil, ErrNotValue
 }

@@ -15,73 +15,51 @@
 package debug
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/katydid/parser-go/parser"
 )
 
-// Walk walks through the whole parser in a top down manner.
-func Walk(p parser.Interface) error {
+// Parse parses through the whole parser in a top down manner and records the values into a Nodes structute.
+func Parse(p parser.Interface) (Nodes, error) {
+	nodes := make(Nodes, 0)
 	for {
 		if err := p.Next(); err != nil {
 			if err == io.EOF {
 				break
 			} else {
-				return err
+				return nil, err
 			}
 		}
-		if err := WalkValue(p); err != nil {
-			return err
+		value, err := parser.GetValue(p)
+		if err != nil {
+			return nil, err
 		}
-		if !p.IsLeaf() {
+		if p.IsLeaf() {
+			nodes = append(nodes, Node{fmt.Sprintf("%v", value), nil})
+		} else {
+			name := fmt.Sprintf("%v", value)
 			p.Down()
-			err := Walk(p)
+			v, err := Parse(p)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			p.Up()
+			nodes = append(nodes, Node{name, v})
 		}
 	}
-	return nil
+	return nodes, nil
 }
 
-// WalkValue tries to parse the current value and returns an error if no value is returned.
-func WalkValue(p parser.Value) error {
-	var err error
-	_, err = p.Bool()
-	if err == nil {
-		return nil
-	}
-	_, err = p.Int()
-	if err == nil {
-		return nil
-	}
-	_, err = p.Uint()
-	if err == nil {
-		return nil
-	}
-	_, err = p.Double()
-	if err == nil {
-		return nil
-	}
-	_, err = p.String()
-	if err == nil {
-		return nil
-	}
-	_, err = p.Bytes()
-	if err == nil {
-		return nil
-	}
-	return parser.ErrNotValue
-}
-
-// RandomWalk does a random walk of the parser, given two probabilities.
+// RandomParse does a random parse of the parser, given two probabilities.
 //
 //	next is passed to r.Intn and when a zero value is returned the Next method on the parser is called.
 //	down is passed to r.Intn and when a non zero value is returned the Down method on the parser is called.
 //
-// RandomWalk is great for testing that the implemented parser can handle random skipping of parts of the tree.
-func RandomWalk(p parser.Interface, r Rand, next, down int) error {
+// RandomParse is great for testing that the implemented parser can handle random skipping of parts of the tree.
+func RandomParse(p parser.Interface, r Rand, next, down int) (Nodes, error) {
+	nodes := make(Nodes, 0)
 	for {
 		if r.Intn(next) == 0 {
 			break
@@ -90,21 +68,28 @@ func RandomWalk(p parser.Interface, r Rand, next, down int) error {
 			if err == io.EOF {
 				break
 			} else {
-				return err
+				return nil, err
 			}
 		}
-		if err := WalkValue(p); err != nil {
-			return err
+		value, err := parser.GetValue(p)
+		if err != nil {
+			return nil, err
 		}
-		if !p.IsLeaf() {
+		if p.IsLeaf() {
+			nodes = append(nodes, Node{fmt.Sprintf("%#v", value), nil})
+		} else {
+			name := fmt.Sprintf("%#v", value)
+			var v Nodes
 			if r.Intn(down) != 0 {
 				p.Down()
-				if err := RandomWalk(p, r, next, down); err != nil {
-					return err
+				v, err = RandomParse(p, r, next, down)
+				if err != nil {
+					return nil, err
 				}
 				p.Up()
 			}
+			nodes = append(nodes, Node{name, v})
 		}
 	}
-	return nil
+	return nodes, nil
 }
