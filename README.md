@@ -80,9 +80,9 @@ type Value interface {
 
 This interface allows for the implementation of an online pull based parser. 
 That is a parser that lazily parses the input as the methods are called and only parses the input once, without backtracking. 
-Exercising the parser can be done with the [debug.Walk](https://pkg.go.dev/github.com/katydid/parser-go/parser/debug#Walk) function. 
+Exercising the parser can be done with the [debug.Parse](https://pkg.go.dev/github.com/katydid/parser-go/parser/debug#Parse) function. 
 The Walk function also returns some debugging output, which should be useful in the development of your own parser.
 
 Your parser should also be able to handle skipping of some of the input. 
 This happens when the Walk function returns before encountering an `io.EOF`. 
-The [debug.RandomWalk](https://pkg.go.dev/github.com/katydid/parser-go/parser/debug#RandomWalk) function is useful for testing this type of robustness in your parser.
+The [debug.RandomParse](https://pkg.go.dev/github.com/katydid/parser-go/parser/debug#RandomParse) function is useful for testing this type of robustness in your parser.
