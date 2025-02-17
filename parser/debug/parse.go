@@ -61,15 +61,15 @@ func Parse(p parser.Interface) (Nodes, error) {
 func RandomParse(p parser.Interface, r Rand, next, down int) (Nodes, error) {
 	nodes := make(Nodes, 0)
 	for {
-		if r.Intn(next) == 0 {
-			break
-		}
 		if err := p.Next(); err != nil {
 			if err == io.EOF {
 				break
 			} else {
 				return nil, err
 			}
+		}
+		if r.Intn(next) == 0 {
+			break
 		}
 		value, err := parser.GetValue(p)
 		if err != nil {
