@@ -83,15 +83,15 @@ func WalkValue(p parser.Value) error {
 // RandomWalk is great for testing that the implemented parser can handle random skipping of parts of the tree.
 func RandomWalk(p parser.Interface, r Rand, next, down int) error {
 	for {
+		if r.Intn(next) == 0 {
+			break
+		}
 		if err := p.Next(); err != nil {
 			if err == io.EOF {
 				break
 			} else {
 				return err
 			}
-		}
-		if r.Intn(next) == 0 {
-			break
 		}
 		if err := WalkValue(p); err != nil {
 			return err
