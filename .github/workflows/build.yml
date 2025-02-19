@@ -21,7 +21,7 @@ jobs:
     - name: Install tools
       run: |
         cd gopath/github.com/katydid/parser-go
-        go tool github.com/awalterschulze/checklicense
+        go install github.com/awalterschulze/checklicense
     - name: env
       run: env && go env && pwd
     - name: tree
