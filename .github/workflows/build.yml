@@ -13,7 +13,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.23
+        go-version: 1.24
     - name: Fetch dependencies
       run: |
         cd gopath/github.com/katydid/parser-go
@@ -21,7 +21,7 @@ jobs:
     - name: Install tools
       run: |
         cd gopath/github.com/katydid/parser-go
-        go install -x github.com/awalterschulze/checklicense
+        go tool github.com/awalterschulze/checklicense
     - name: env
       run: env && go env && pwd
     - name: tree

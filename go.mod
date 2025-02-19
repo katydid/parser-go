@@ -1,5 +1,7 @@
 module github.com/katydid/parser-go
 
-go 1.23
+go 1.24
 
-require github.com/awalterschulze/checklicense v1.0.0
+tool github.com/awalterschulze/checklicense
+
+require github.com/awalterschulze/checklicense v1.0.0 // indirect
