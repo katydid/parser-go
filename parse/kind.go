@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package parser
+package parse
 
 // Kind of the token that is parsed.
 // This is represented by one for following bytes:
