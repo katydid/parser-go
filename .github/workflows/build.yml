@@ -31,7 +31,7 @@ jobs:
         cd gopath/github.com/katydid/parser-go
         make test
     - name: Checklicencse
-      uses: awalterschulze/checklicense@v1.0.4
+      uses: awalterschulze/checklicense@v1
       with:
         ignores: doc.go tools/tools.go .svg .txt
     - name: Diff
