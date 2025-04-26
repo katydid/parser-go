@@ -12,8 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-// downgrade package is used for compatibility.
-// DowngradeParser downgrades a new parse.Parser implementation to an old parser.Interface implementation.
+// downgrade package downgrades a new parse.Parser implementation to an old parser.Interface implementation.
 package downgrade
 
 import (
@@ -22,15 +21,14 @@ import (
 	"github.com/katydid/parser-go/cast"
 	"github.com/katydid/parser-go/parse"
 	"github.com/katydid/parser-go/parser"
-	"github.com/katydid/parser-go/pool"
 )
 
-type ParserWithInit interface {
+type parserWithInit interface {
 	parse.Parser
 	Init([]byte)
 }
 
-type InterfaceWithInit interface {
+type interfaceWithInit interface {
 	parser.Interface
 	Init([]byte) error
 }
@@ -40,14 +38,12 @@ type downgradeParser struct {
 	actions []action
 	state   state
 	stack   []state
-	parser  ParserWithInit
-	pool    pool.Pool
+	parser  parserWithInit
 }
 
-// DowngradeParser downgrades a new parse.Parser implementation to an old parser.Interface implementation with an Init method.
-func DowngradeParser(parser parse.Parser) parser.Interface {
-	p := pool.New()
-	parserWithInit, ok := parser.(ParserWithInit)
+// Parser downgrades a new parse.Parser implementation to an old parser.Interface implementation with an Init method.
+func Parser(parser parse.Parser) parser.Interface {
+	parserWithInit, ok := parser.(parserWithInit)
 	if !ok {
 		parserWithInit = &noopInit{parser}
 	}
@@ -55,7 +51,6 @@ func DowngradeParser(parser parse.Parser) parser.Interface {
 		stack:   make([]state, 0, 10),
 		actions: make([]action, 0, 10),
 		parser:  parserWithInit,
-		pool:    p,
 	}
 }
 
@@ -65,14 +60,12 @@ type noopInit struct {
 
 func (n *noopInit) Init([]byte) {}
 
-// DowngradeParserWithInit downgrades a new parse.Parser implementation to an old parser.Interface implementation with an Init method.
-func DowngradeParserWithInit(parser ParserWithInit) InterfaceWithInit {
-	p := pool.New()
+// ParserWithInit downgrades a new parse.Parser implementation to an old parser.Interface implementation with an Init method.
+func ParserWithInit(parser parserWithInit) interfaceWithInit {
 	return &downgradeParser{
 		stack:   make([]state, 0, 10),
 		actions: make([]action, 0, 10),
 		parser:  parser,
-		pool:    p,
 	}
 }
 
@@ -82,7 +75,6 @@ func (p *downgradeParser) Init(buf []byte) error {
 	p.actions = p.actions[:0]
 	p.state = state{}
 	p.stack = p.stack[:0]
-	p.pool.FreeAll()
 	return nil
 }
 
