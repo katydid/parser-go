@@ -32,3 +32,8 @@ type Parser interface {
 	// Tokenize parses the current token.
 	Token() (Kind, []byte, error)
 }
+
+type ParserWithInit interface {
+	Parser
+	Init([]byte)
+}

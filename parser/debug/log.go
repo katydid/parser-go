@@ -15,70 +15,26 @@
 package debug
 
 import (
-	"log"
-	"os"
-	"path/filepath"
-	"runtime"
-	"strconv"
 	"time"
 
+	"github.com/katydid/parser-go/log"
 	"github.com/katydid/parser-go/parser"
 )
 
 // Logger is an interface for a type that is made to log debug info.
 type Logger interface {
-	Printf(format string, v ...interface{})
+	Printf(format string, v ...any)
 }
 
 // NewLineLogger returns a logger that logs the line at which the Printf method was called to stderr.
 func NewLineLogger() Logger {
-	return &line{log.New(os.Stderr, "", 0)}
-}
-
-type line struct {
-	l Logger
-}
-
-func (l *line) Printf(format string, v ...interface{}) {
-	_, thisfile, _, ok := runtime.Caller(0)
-	if !ok {
-		l.l.Printf("<weirdlyunknown>:0: "+format, v...)
-		return
-	}
-	i := 0
-	for {
-		i++
-		_, file, line, ok := runtime.Caller(i)
-		if !ok {
-			l.l.Printf("<unknown>:"+strconv.Itoa(i)+": "+format, v...)
-			return
-		}
-		if file == thisfile {
-			continue
-		}
-		_, name := filepath.Split(file)
-		l.l.Printf(name+":"+strconv.Itoa(line)+": "+format, v...)
-		return
-	}
+	return log.NewLogger(log.WithLineNumbers())
 }
 
 // NewDelayLogger returns a logger that sleeps after every log.
 // This is useful for debugging infinite loops.
 func NewDelayLogger(delay time.Duration) Logger {
-	return &d{
-		delay: delay,
-		log:   NewLineLogger(),
-	}
-}
-
-type d struct {
-	log   Logger
-	delay time.Duration
-}
-
-func (d *d) Printf(format string, v ...interface{}) {
-	d.log.Printf(format, v...)
-	time.Sleep(d.delay)
+	return log.NewLogger(log.WithLineNumbers(), log.WithDelay(delay))
 }
 
 type l struct {
