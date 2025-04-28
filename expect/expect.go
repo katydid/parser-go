@@ -118,6 +118,14 @@ func Tag(t *testing.T, tzer parse.Parser, want string) {
 	}
 }
 
+func NoErr(t *testing.T, f func() error) {
+	t.Helper()
+	err := f()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func Err[A any](t *testing.T, f func() (A, error)) {
 	t.Helper()
 	got, err := f()
