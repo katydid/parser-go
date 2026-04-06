@@ -73,7 +73,7 @@ func (p *downgradeParser) Init(buf []byte) error {
 	p.parser.Init(buf)
 	p.action = nextAction
 	p.actions = p.actions[:0]
-	p.state = state{}
+	p.state = atStartState
 	p.stack = p.stack[:0]
 	return nil
 }
@@ -86,29 +86,18 @@ func (p *downgradeParser) nextAtStartState(action action) error {
 			return err
 		}
 		switch parseHint {
-		case parse.ObjectOpenHint:
-			p.state.kind = inObjectAtKeyStateKind
+		case parse.EnterHint:
+			p.state = atFieldState
 			parseHintNext, err := p.parser.Next()
 			if err != nil {
 				return err
 			}
-			if parseHintNext == parse.ObjectCloseHint {
+			if parseHintNext == parse.LeaveHint {
 				return p.eof()
 			}
 			return nil
-		case parse.ArrayOpenHint:
-			p.state.kind = inArrayIndexStateKind
-			parseHintNext, err := p.parser.Next()
-			if err != nil {
-				return err
-			}
-			if parseHintNext == parse.ArrayCloseHint {
-				return p.eof()
-			}
-			p.state.arrayElemHint = parseHintNext
-			return nil
-		case parse.ValueHint, parse.KeyHint:
-			p.state.kind = inLeafStateKind
+		case parse.ValueHint, parse.FieldHint:
+			p.state = inLeafState
 			return nil
 		}
 		panic("unreachable")
@@ -160,8 +149,8 @@ func (p *downgradeParser) nextAtEOF(action action) error {
 	panic("unreachable")
 }
 
-func (p *downgradeParser) nextInObjectAtKeyState(action action) error {
-	// inObjectAtKeyStateKind represents that we have scanned a key
+func (p *downgradeParser) nextInAtFieldState(action action) error {
+	// inAtFieldStateKind represents that we have scanned a key
 	switch action {
 	case nextAction:
 		// We want to skip over value and move onto next key.
@@ -171,14 +160,14 @@ func (p *downgradeParser) nextInObjectAtKeyState(action action) error {
 		}
 		// Next we move onto the Next key.
 		parseKind, err := p.parser.Next()
-		if parseKind == parse.ObjectCloseHint {
+		if parseKind == parse.LeaveHint {
 			// If the Object has ended, we return eof
 			return p.eof()
 		}
 		return err
 	case downAction:
 		// Set the state to be ready to parse to next key, when Up is called.
-		p.state.kind = inObjectAtValueStateKind
+		p.state = atValueState
 		// We do not want to skip over the value, we want to continue into value.
 		// We start by pushing the current state to the stack.
 		if err := p.push(); err != nil {
@@ -207,18 +196,18 @@ func (p *downgradeParser) nextInObjectAtKeyState(action action) error {
 	panic("unreachable")
 }
 
-func (p *downgradeParser) nextInObjectAtValueState(action action) error {
-	// inObjectAtValueStateKind represents that we have scanned a value and Up was called.
+func (p *downgradeParser) nextInAtValueState(action action) error {
+	// inAtValueStateKind represents that we have scanned a value and Up was called.
 	switch action {
 	case nextAction:
 		// Up was just called and we need to scan to the Next key.
 		parseKind, err := p.parser.Next()
-		if parseKind == parse.ObjectCloseHint {
+		if parseKind == parse.LeaveHint {
 			// If the Object has ended, we return eof
 			return p.eof()
 		}
 		// Set the state to the next key
-		p.state.kind = inObjectAtKeyStateKind
+		p.state = atFieldState
 		return err
 	case downAction:
 		// We can't call Down right, while at the end of value.
@@ -239,122 +228,6 @@ func (p *downgradeParser) nextInObjectAtValueState(action action) error {
 	panic("unreachable")
 }
 
-func (p *downgradeParser) nextInArrayIndexState(action action) error {
-	// inArrayIndexState represents that we have scanned an element, if it was null, bool, number or string and the first key of an object or .
-	switch action {
-	case nextAction:
-		p.state.arrayIndex += 1
-		switch p.state.arrayElemHint {
-		case parse.ObjectOpenHint, parse.ArrayOpenHint:
-			if err := p.parser.Skip(); err != nil {
-				return err
-			}
-		case parse.ValueHint:
-		case parse.KeyHint:
-			panic("unreachable: unexpected key hint in array")
-		default:
-			panic("unreachable")
-		}
-		parseHint, err := p.parser.Next()
-		if err != nil {
-			return err
-		}
-		if parseHint == parse.ArrayCloseHint {
-			return p.eof()
-		}
-		p.state.arrayElemHint = parseHint
-		return nil
-	case downAction:
-		// We are at an array element that we are representing as an index.
-		// We do not need parse another thing, simply update the state.
-		p.state.kind = inArrayAfterIndexStateKind
-		if err := p.push(); err != nil {
-			return err
-		}
-		switch p.state.arrayElemHint {
-		case parse.ObjectOpenHint:
-			p.state.kind = inObjectAtKeyStateKind
-			parseHintNext, err := p.parser.Next()
-			if err != nil {
-				return err
-			}
-			if parseHintNext == parse.ObjectCloseHint {
-				return p.eof()
-			}
-			return nil
-		case parse.ArrayOpenHint:
-			p.state.kind = inArrayIndexStateKind
-			parseHintNext, err := p.parser.Next()
-			if err != nil {
-				return err
-			}
-			if parseHintNext == parse.ArrayCloseHint {
-				return p.eof()
-			}
-			p.state.arrayElemHint = parseHintNext
-			return nil
-		case parse.ValueHint:
-			p.state.kind = inLeafStateKind
-			return nil
-		case parse.KeyHint:
-			panic("unreachable: unexpected key hint in array")
-		}
-		panic("unreachable")
-	case upAction:
-		switch p.state.arrayElemHint {
-		case parse.ObjectOpenHint, parse.ArrayOpenHint:
-			// skip the element
-			if err := p.parser.Skip(); err != nil {
-				return err
-			}
-		case parse.ValueHint:
-		case parse.KeyHint:
-			panic("unreachable: unexpected key hint in array")
-		default:
-			panic("unreachable")
-		}
-		// Skip the rest of the array
-		if err := p.parser.Skip(); err != nil {
-			return err
-		}
-		if err := p.pop(); err != nil {
-			return err
-		}
-		return p.next()
-	}
-	panic("unreachable")
-}
-
-func (p *downgradeParser) nextInArrayAfterIndexState(action action) error {
-	// This is after Up was called on an element.
-	switch action {
-	case nextAction:
-		p.state.arrayIndex += 1
-		parseHint, err := p.parser.Next()
-		if err != nil {
-			return err
-		}
-		if parseHint == parse.ArrayCloseHint {
-			return p.eof()
-		}
-		p.state.kind = inArrayIndexStateKind
-		p.state.arrayElemHint = parseHint
-		return nil
-	case downAction:
-		return errDown
-	case upAction:
-		// Skip the rest of the array
-		if err := p.parser.Skip(); err != nil {
-			return err
-		}
-		if err := p.pop(); err != nil {
-			return err
-		}
-		return p.next()
-	}
-	panic("unreachable")
-}
-
 func (p *downgradeParser) eof() error {
 	if len(p.stack) == 0 {
 		// if we are at the top of stack, then check that there is no more input left.
@@ -368,7 +241,7 @@ func (p *downgradeParser) eof() error {
 	}
 	// When EOF is returned also set the state to an EOF state.
 	// This state allows us to call Up.
-	p.state.kind = atEOFStateKind
+	p.state = atEOFState
 	return io.EOF
 }
 
@@ -376,20 +249,16 @@ func (p *downgradeParser) next() error {
 	action := p.action
 	// do not forget to reset action
 	p.action = nextAction
-	switch p.state.kind {
-	case atStartStateKind:
+	switch p.state {
+	case atStartState:
 		return p.nextAtStartState(action)
-	case inLeafStateKind:
+	case inLeafState:
 		return p.nextInLeafState(action)
-	case inArrayIndexStateKind:
-		return p.nextInArrayIndexState(action)
-	case inArrayAfterIndexStateKind:
-		return p.nextInArrayAfterIndexState(action)
-	case inObjectAtKeyStateKind:
-		return p.nextInObjectAtKeyState(action)
-	case inObjectAtValueStateKind:
-		return p.nextInObjectAtValueState(action)
-	case atEOFStateKind:
+	case atFieldState:
+		return p.nextInAtFieldState(action)
+	case atValueState:
+		return p.nextInAtValueState(action)
+	case atEOFState:
 		return p.nextAtEOF(action)
 	}
 	panic("unreachable")
@@ -440,8 +309,7 @@ func (p *downgradeParser) pushAction(newAction action) {
 func (p *downgradeParser) push() error {
 	// Append the current state to the stack.
 	p.stack = append(p.stack, p.state)
-	p.state.kind = atStartStateKind
-	p.state.arrayIndex = 0
+	p.state = atStartState
 	return nil
 }
 
@@ -460,7 +328,7 @@ func (p *downgradeParser) pop() error {
 }
 
 func (p *downgradeParser) IsLeaf() bool {
-	return p.state.kind == inLeafStateKind
+	return p.state == inLeafState
 }
 
 func (p *downgradeParser) Bool() (bool, error) {
@@ -478,9 +346,6 @@ func (p *downgradeParser) Bool() (bool, error) {
 }
 
 func (p *downgradeParser) Int() (int64, error) {
-	if p.state.kind == inArrayIndexStateKind {
-		return p.state.arrayIndex, nil
-	}
 	tokenKind, bs, err := p.parser.Token()
 	if err != nil {
 		return 0, err
@@ -492,9 +357,6 @@ func (p *downgradeParser) Int() (int64, error) {
 }
 
 func (p *downgradeParser) Uint() (uint64, error) {
-	if p.state.kind == inArrayIndexStateKind {
-		return 0, errNotUint
-	}
 	i, err := p.Int()
 	if err != nil {
 		return 0, err

@@ -24,58 +24,42 @@ func (h Hint) IsUnknown() bool {
 	return h == UnknownHint
 }
 
-const ObjectOpenHint = Hint('{')
+const EnterHint = Hint('{')
 
 func (h Hint) IsObjectOpen() bool {
-	return h == ObjectOpenHint
+	return h == EnterHint
 }
 
-const KeyHint = Hint('k')
+const FieldHint = Hint('F')
 
 func (h Hint) IsKey() bool {
-	return h == KeyHint
+	return h == FieldHint
 }
 
-const ValueHint = Hint('v')
+const ValueHint = Hint('V')
 
 func (h Hint) IsValue() bool {
 	return h == ValueHint
 }
 
-const ObjectCloseHint = Hint('}')
+const LeaveHint = Hint('}')
 
 func (h Hint) IsObjectClose() bool {
-	return h == ObjectCloseHint
-}
-
-const ArrayOpenHint = Hint('[')
-
-func (h Hint) IsArrayOpen() bool {
-	return h == ArrayOpenHint
-}
-
-const ArrayCloseHint = Hint(']')
-
-func (h Hint) IsArrayClose() bool {
-	return h == ArrayCloseHint
+	return h == LeaveHint
 }
 
 func (h Hint) String() string {
 	switch h {
 	case UnknownHint:
 		return "unknown"
-	case ArrayOpenHint:
-		return "arrayOpen"
 	case ValueHint:
 		return "value"
-	case ArrayCloseHint:
-		return "arrayClose"
-	case ObjectOpenHint:
-		return "objectOpen"
-	case KeyHint:
-		return "key"
-	case ObjectCloseHint:
-		return "objectClose"
+	case EnterHint:
+		return "enter"
+	case FieldHint:
+		return "field"
+	case LeaveHint:
+		return "leave"
 	}
 	panic("unreachable")
 }

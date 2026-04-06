@@ -14,24 +14,13 @@
 
 package downgrade
 
-import "github.com/katydid/parser-go/parse"
+type state byte
 
-type state struct {
-	kind          stateKind
-	arrayElemHint parse.Hint
-	arrayIndex    int64
-}
+const atStartState = state(0)
 
-type stateKind byte
+const inLeafState = state('l')
 
-const atStartStateKind = stateKind(0)
+const atFieldState = state('f')
+const atValueState = state('v')
 
-const inLeafStateKind = stateKind('l')
-
-const inArrayIndexStateKind = stateKind('i')
-const inArrayAfterIndexStateKind = stateKind('a')
-
-const inObjectAtKeyStateKind = stateKind('k')
-const inObjectAtValueStateKind = stateKind('v')
-
-const atEOFStateKind = stateKind('$')
+const atEOFState = state('$')

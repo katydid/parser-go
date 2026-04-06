@@ -109,7 +109,7 @@ func Tag(t *testing.T, tzer parse.Parser, want string) {
 		t.Fatal(err)
 	}
 	if tokenKind != parse.TagKind {
-		t.Fatalf("expected string, but got %v", tokenKind)
+		t.Fatalf("expected tag, but got %v", tokenKind)
 	}
 	gotf := string(gotb)
 	got := fmt.Sprintf("%v", gotf)
@@ -136,7 +136,7 @@ func Err[A any](t *testing.T, f func() (A, error)) {
 
 func EOF(t *testing.T, p parse.Parser) {
 	t.Helper()
-	if _, err := p.Next(); err != io.EOF {
-		t.Fatalf("expected EOF, but got %v", err)
+	if h, err := p.Next(); err != io.EOF {
+		t.Fatalf("expected EOF, but got %v with hint %v", err, h)
 	}
 }
