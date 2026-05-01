@@ -30,10 +30,14 @@ type Parser interface {
 	Skip() error
 
 	// Tokenize parses the current token.
-	Token() (Kind, []byte, error)
+	Token
 }
 
 type ParserWithInit interface {
 	Parser
 	Init([]byte)
+}
+
+type Token interface {
+	Token() (Kind, []byte, error)
 }
