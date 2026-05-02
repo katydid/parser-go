@@ -31,12 +31,24 @@ func ToInt64(bs []byte) int64 {
 	return *(*int64)(unsafe.Pointer(&bs[0]))
 }
 
+func ToUint64(bs []byte) uint64 {
+	return *(*uint64)(unsafe.Pointer(&bs[0]))
+}
+
 func ToFloat64(bs []byte) float64 {
 	u := *(*uint64)(unsafe.Pointer(&bs[0]))
 	return math.Float64frombits(u)
 }
 
 func FromInt64(i int64, _alloc func(size int) []byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  8,
+		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&i)),
+	}))
+}
+
+func FromUint64(i uint64, _alloc func(size int) []byte) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Len:  8,
 		Cap:  8,
@@ -51,4 +63,8 @@ func FromFloat64(f float64, _alloc func(size int) []byte) []byte {
 		Cap:  8,
 		Data: uintptr(unsafe.Pointer(&u)),
 	}))
+}
+
+func FromString(s string, _alloc func(size int) []byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&s))
 }
