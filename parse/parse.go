@@ -14,6 +14,12 @@
 
 package parse
 
+import (
+	"fmt"
+
+	"github.com/katydid/parser-go/cast"
+)
+
 type Parser interface {
 	// Next returns the Hint of the token or an error.
 	Next() (Hint, error)
@@ -40,4 +46,49 @@ type ParserWithInit interface {
 
 type Token interface {
 	Token() (Kind, []byte, error)
+}
+
+// GetValue returns the current value.
+func GetValue(p Token) (any, error) {
+	kind, val, err := p.Token()
+	if err != nil {
+		return nil, err
+	}
+	switch kind {
+	case NullKind:
+		return nil, nil
+	case FalseKind:
+		return false, nil
+	case TrueKind:
+		return true, nil
+	case BytesKind:
+		return val, nil
+	case StringKind:
+		return cast.ToString(val), nil
+	case Int64Kind:
+		return cast.ToInt64(val), nil
+	case Float64Kind:
+		return cast.ToFloat64(val), nil
+	case DecimalKind:
+		return cast.ToString(val), nil
+	case NanosecondsKind:
+		return cast.ToInt64(val), nil
+	case DateTimeKind:
+		return cast.ToString(val), nil
+	case TagKind:
+		return cast.ToString(val), nil
+	case UnknownKind:
+		panic("UnknownKind")
+	default:
+		panic("unreachable")
+	}
+}
+
+// Sprint returns a value printed as a string.
+func Sprint(value Token) string {
+	v, err := GetValue(value)
+	if err != nil {
+		return fmt.Sprintf("error:<%v>", err)
+	}
+	return fmt.Sprintf("%#v", v)
 }
