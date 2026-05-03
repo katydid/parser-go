@@ -15,6 +15,7 @@
 package debug
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/katydid/parser-go/parse"
@@ -39,25 +40,34 @@ func Parse(p parse.Parser) (Nodes, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			name := parse.Sprint(p)
+			name, err := parse.GetValue(p)
+			if err != nil {
+				return nil, err
+			}
 			childHint, err := p.Next()
 			if err != nil {
 				return nil, err
 			}
 			switch childHint {
 			case parse.ValueHint:
-				val := parse.Sprint(p)
-				nodes = append(nodes, Node{Label: name, Children: []Node{{Label: val}}})
+				val, err := parse.GetValue(p)
+				if err != nil {
+					return nil, err
+				}
+				nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: []Node{{Label: fmt.Sprintf("%v", val)}}})
 			case parse.EnterHint:
 				children, err := Parse(p)
 				if err != nil {
 					return nil, err
 				}
-				nodes = append(nodes, Node{Label: name, Children: children})
+				nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: children})
 			}
 		case parse.ValueHint:
-			val := parse.Sprint(p)
-			nodes = append(nodes, Node{Label: val, Children: nil})
+			val, err := parse.GetValue(p)
+			if err != nil {
+				return nil, err
+			}
+			nodes = append(nodes, Node{Label: fmt.Sprintf("%v", val), Children: nil})
 		case parse.LeaveHint:
 			return nodes, nil
 		}
@@ -91,7 +101,10 @@ func RandomParse(p parse.Parser, r Rand, next, skip int) (Nodes, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			name := parse.Sprint(p)
+			name, err := parse.GetValue(p)
+			if err != nil {
+				return nil, err
+			}
 			if r.Intn(skip) == 0 {
 				p.Skip()
 			} else {
@@ -101,19 +114,25 @@ func RandomParse(p parse.Parser, r Rand, next, skip int) (Nodes, error) {
 				}
 				switch childHint {
 				case parse.ValueHint:
-					val := parse.Sprint(p)
-					nodes = append(nodes, Node{Label: name, Children: []Node{{Label: val}}})
+					val, err := parse.GetValue(p)
+					if err != nil {
+						return nil, err
+					}
+					nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: []Node{{Label: fmt.Sprintf("%v", val)}}})
 				case parse.EnterHint:
 					children, err := Parse(p)
 					if err != nil {
 						return nil, err
 					}
-					nodes = append(nodes, Node{Label: name, Children: children})
+					nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: children})
 				}
 			}
 		case parse.ValueHint:
-			val := parse.Sprint(p)
-			nodes = append(nodes, Node{Label: val, Children: nil})
+			val, err := parse.GetValue(p)
+			if err != nil {
+				return nil, err
+			}
+			nodes = append(nodes, Node{Label: fmt.Sprintf("%v", val), Children: nil})
 		case parse.LeaveHint:
 			return nodes, nil
 		}
