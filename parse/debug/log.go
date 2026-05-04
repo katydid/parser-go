@@ -68,6 +68,11 @@ func (l *l) Skip() error {
 
 func (l *l) Token() (parse.Kind, []byte, error) {
 	kind, val, err := l.p.Token()
-	l.l.Printf(l.name+".Token() (%v, %v, %v)", kind, val, err)
+	value, valerr := parse.GetValue(l.p)
+	if valerr != nil {
+		l.l.Printf(l.name+".Token() (%v, %v, %v) parse.GetValue() (%v)", kind, val, err, valerr)
+	} else {
+		l.l.Printf(l.name+".Token() (%v, %v, %v)", kind, value, err)
+	}
 	return kind, val, err
 }
