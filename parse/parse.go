@@ -15,6 +15,7 @@
 package parse
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/katydid/parser-go/cast"
@@ -78,11 +79,13 @@ func GetValue(p Token) (any, error) {
 	case TagKind:
 		return cast.ToString(val), nil
 	case UnknownKind:
-		panic("UnknownKind")
+		return nil, errUnknownKind
 	default:
 		panic("unreachable")
 	}
 }
+
+var errUnknownKind = errors.New("unknown kind")
 
 // Sprint returns a value printed as a string.
 func Sprint(value Token) string {
