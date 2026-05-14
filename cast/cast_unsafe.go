@@ -18,6 +18,7 @@ package cast
 
 import (
 	"math"
+	"reflect"
 	"unsafe"
 )
 
@@ -39,17 +40,32 @@ func ToFloat64(bs []byte) float64 {
 	return math.Float64frombits(u)
 }
 
+// FromInt64 is very unsafe, you have make sure to keep the int64 in a value that won't be freed, until you are doing using this slice.
 func FromInt64(i int64, _alloc func(size int) []byte) []byte {
-	return unsafe.Slice((*byte)(unsafe.Pointer(&i)), 8)
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  8,
+		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&i)),
+	}))
 }
 
+// FromUint64 is very unsafe, you have make sure to keep the uint64 in a value that won't be freed, until you are doing using this slice.
 func FromUint64(i uint64, _alloc func(size int) []byte) []byte {
-	return unsafe.Slice((*byte)(unsafe.Pointer(&i)), 8)
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  8,
+		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&i)),
+	}))
 }
 
+// FromFloat64 is very unsafe, you have make sure to keep the float64 in a value that won't be freed, until you are doing using this slice.
 func FromFloat64(f float64, _alloc func(size int) []byte) []byte {
 	u := math.Float64bits(f)
-	return unsafe.Slice((*byte)(unsafe.Pointer(&u)), 8)
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  8,
+		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&u)),
+	}))
 }
 
 func FromString(s string, _alloc func(size int) []byte) []byte {
