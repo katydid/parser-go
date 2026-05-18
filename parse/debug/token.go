@@ -15,7 +15,6 @@
 package debug
 
 import (
-	"github.com/katydid/parser-go/cast"
 	"github.com/katydid/parser-go/parse"
 )
 
@@ -33,8 +32,8 @@ func NewDoubleValue(v float64) parse.Token {
 	return &doubleValue{v}
 }
 
-func (v *doubleValue) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromFloat64(v.v, alloc), nil
+func (v *doubleValue) Token() (parse.Kind, any, error) {
+	return parse.Float64Kind, v.v, nil
 }
 
 type intValue struct {
@@ -46,8 +45,8 @@ func NewIntValue(v int64) parse.Token {
 	return &intValue{v}
 }
 
-func (v *intValue) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromInt64(v.v, alloc), nil
+func (v *intValue) Token() (parse.Kind, any, error) {
+	return parse.Float64Kind, v.v, nil
 }
 
 type uintValue struct {
@@ -59,8 +58,8 @@ func NewUintValue(v uint64) parse.Token {
 	return &uintValue{v}
 }
 
-func (v *uintValue) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromUint64(v.v, alloc), nil
+func (v *uintValue) Token() (parse.Kind, any, error) {
+	return parse.Float64Kind, float64(v.v), nil
 }
 
 type boolValue struct {
@@ -72,7 +71,7 @@ func NewBoolValue(v bool) parse.Token {
 	return &boolValue{v}
 }
 
-func (v *boolValue) Token() (parse.Kind, []byte, error) {
+func (v *boolValue) Token() (parse.Kind, any, error) {
 	if v.v {
 		return parse.TrueKind, nil, nil
 	}
@@ -88,8 +87,8 @@ func NewStringValue(v string) parse.Token {
 	return &stringValue{v}
 }
 
-func (v *stringValue) Token() (parse.Kind, []byte, error) {
-	return parse.StringKind, cast.FromString(v.v, alloc), nil
+func (v *stringValue) Token() (parse.Kind, any, error) {
+	return parse.StringKind, v.v, nil
 }
 
 type bytesValue struct {
@@ -101,6 +100,6 @@ func NewBytesValue(v []byte) parse.Token {
 	return &bytesValue{v}
 }
 
-func (v *bytesValue) Token() (parse.Kind, []byte, error) {
+func (v *bytesValue) Token() (parse.Kind, any, error) {
 	return parse.BytesKind, v.v, nil
 }

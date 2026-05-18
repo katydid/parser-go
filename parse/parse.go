@@ -17,8 +17,6 @@ package parse
 import (
 	"errors"
 	"fmt"
-
-	"github.com/katydid/parser-go/cast"
 )
 
 type Parser interface {
@@ -46,7 +44,7 @@ type ParserWithInit interface {
 }
 
 type Token interface {
-	Token() (Kind, []byte, error)
+	Token() (Kind, any, error)
 }
 
 // GetValue returns the current value.
@@ -65,19 +63,19 @@ func GetValue(p Token) (any, error) {
 	case BytesKind:
 		return val, nil
 	case StringKind:
-		return cast.ToString(val), nil
+		return val, nil
 	case Int64Kind:
-		return cast.ToInt64(val), nil
+		return val, nil
 	case Float64Kind:
-		return cast.ToFloat64(val), nil
+		return val, nil
 	case DecimalKind:
-		return cast.ToString(val), nil
+		return val, nil
 	case NanosecondsKind:
-		return cast.ToInt64(val), nil
+		return val, nil
 	case DateTimeKind:
-		return cast.ToString(val), nil
+		return val, nil
 	case TagKind:
-		return cast.ToString(val), nil
+		return val, nil
 	case UnknownKind:
 		return nil, errUnknownKind
 	default:

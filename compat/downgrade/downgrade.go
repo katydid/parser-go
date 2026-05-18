@@ -18,7 +18,6 @@ package downgrade
 import (
 	"io"
 
-	"github.com/katydid/parser-go/cast"
 	"github.com/katydid/parser-go/parse"
 	"github.com/katydid/parser-go/parser"
 )
@@ -353,7 +352,7 @@ func (p *downgradeParser) Int() (int64, error) {
 	if tokenKind != parse.Int64Kind {
 		return 0, errNotInt
 	}
-	return cast.ToInt64(bs), nil
+	return bs.(int64), nil
 }
 
 func (p *downgradeParser) Uint() (uint64, error) {
@@ -375,7 +374,7 @@ func (p *downgradeParser) Double() (float64, error) {
 	if tokenKind != parse.Float64Kind {
 		return 0, errNotFloat
 	}
-	return cast.ToFloat64(bs), nil
+	return bs.(float64), nil
 }
 
 func (p *downgradeParser) String() (string, error) {
@@ -386,7 +385,7 @@ func (p *downgradeParser) String() (string, error) {
 	if tokenKind != parse.StringKind && tokenKind != parse.DecimalKind {
 		return "", errNotString
 	}
-	return cast.ToString(bs), nil
+	return bs.(string), nil
 }
 
 var nullBytes = []byte{'n', 'u', 'l', 'l'}
@@ -399,5 +398,5 @@ func (p *downgradeParser) Bytes() ([]byte, error) {
 	if tokenKind == parse.NullKind {
 		return nullBytes, nil
 	}
-	return bs, nil
+	return bs.([]byte), nil
 }

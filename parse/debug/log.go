@@ -66,7 +66,7 @@ func (l *l) Skip() error {
 	return err
 }
 
-func (l *l) Token() (parse.Kind, []byte, error) {
+func (l *l) Token() (parse.Kind, any, error) {
 	kind, val, err := l.p.Token()
 	value, valerr := parse.GetValue(l.p)
 	if valerr != nil {

@@ -19,7 +19,6 @@ import (
 	"io"
 	"testing"
 
-	"github.com/katydid/parser-go/cast"
 	"github.com/katydid/parser-go/parse"
 )
 
@@ -65,7 +64,7 @@ func Int(t *testing.T, tzer parse.Parser, want int64) {
 	if tokenKind != parse.Int64Kind {
 		t.Fatalf("expected int64, but got %v", tokenKind)
 	}
-	got := cast.ToInt64(gotb)
+	got := gotb.(int64)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
 	}
@@ -80,7 +79,7 @@ func Float(t *testing.T, tzer parse.Parser, want float64) {
 	if tokenKind != parse.Float64Kind {
 		t.Fatalf("expected float64, but got %v", tokenKind)
 	}
-	got := cast.ToFloat64(gotb)
+	got := gotb.(float64)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
 	}
@@ -95,7 +94,7 @@ func String(t *testing.T, tzer parse.Parser, want string) {
 	if tokenKind != parse.StringKind {
 		t.Fatalf("expected string, but got %v", tokenKind)
 	}
-	gotf := string(gotb)
+	gotf := gotb.(string)
 	got := fmt.Sprintf("%v", gotf)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
@@ -111,7 +110,7 @@ func Tag(t *testing.T, tzer parse.Parser, want string) {
 	if tokenKind != parse.TagKind {
 		t.Fatalf("expected tag, but got %v", tokenKind)
 	}
-	gotf := string(gotb)
+	gotf := gotb.(string)
 	got := fmt.Sprintf("%v", gotf)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
