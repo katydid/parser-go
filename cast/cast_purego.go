@@ -31,6 +31,16 @@ func FromInt64(i int64, alloc func(size int) []byte) []byte {
 	return bs
 }
 
+func ToInt32(bs []byte) int32 {
+	return int32(binary.LittleEndian.Uint32(bs))
+}
+
+func FromInt32(i int32, alloc func(size int) []byte) []byte {
+	bs := alloc(4)
+	binary.LittleEndian.PutUint32(bs, uint32(i))
+	return bs
+}
+
 func ToUint64(bs []byte) uint64 {
 	return binary.LittleEndian.Uint64(bs)
 }
@@ -38,6 +48,16 @@ func ToUint64(bs []byte) uint64 {
 func FromUint64(i uint64, alloc func(size int) []byte) []byte {
 	bs := alloc(8)
 	binary.LittleEndian.PutUint64(bs, uint64(i))
+	return bs
+}
+
+func ToUint32(bs []byte) uint32 {
+	return binary.LittleEndian.Uint32(bs)
+}
+
+func FromUint32(i uint32, alloc func(size int) []byte) []byte {
+	bs := alloc(4)
+	binary.LittleEndian.PutUint32(bs, uint32(i))
 	return bs
 }
 
@@ -50,6 +70,18 @@ func FromFloat64(f float64, alloc func(size int) []byte) []byte {
 	bs := alloc(8)
 	u := math.Float64bits(f)
 	binary.LittleEndian.PutUint64(bs, u)
+	return bs
+}
+
+func ToFloat32(bs []byte) float32 {
+	u := binary.LittleEndian.Uint32(bs)
+	return math.Float32frombits(u)
+}
+
+func FromFloat32(f float32, alloc func(size int) []byte) []byte {
+	bs := alloc(4)
+	u := math.Float32bits(f)
+	binary.LittleEndian.PutUint32(bs, u)
 	return bs
 }
 

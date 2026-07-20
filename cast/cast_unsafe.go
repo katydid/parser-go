@@ -35,6 +35,19 @@ func FromInt64(i int64, _alloc func(size int) []byte) []byte {
 	}))
 }
 
+func ToInt32(bs []byte) int32 {
+	return *(*int32)(unsafe.Pointer(&bs[0]))
+}
+
+// FromInt32 is very unsafe, you have make sure to keep the int32 in a value that won't be freed, until you are doing using this slice.
+func FromInt32(i int32, _alloc func(size int) []byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  4,
+		Cap:  4,
+		Data: uintptr(unsafe.Pointer(&i)),
+	}))
+}
+
 func ToUint64(bs []byte) uint64 {
 	return *(*uint64)(unsafe.Pointer(&bs[0]))
 }
@@ -44,6 +57,19 @@ func FromUint64(i uint64, _alloc func(size int) []byte) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Len:  8,
 		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&i)),
+	}))
+}
+
+func ToUint32(bs []byte) uint32 {
+	return *(*uint32)(unsafe.Pointer(&bs[0]))
+}
+
+// FromUint32 is very unsafe, you have make sure to keep the uint32 in a value that won't be freed, until you are doing using this slice.
+func FromUint32(i uint32, _alloc func(size int) []byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  4,
+		Cap:  4,
 		Data: uintptr(unsafe.Pointer(&i)),
 	}))
 }
@@ -59,6 +85,21 @@ func FromFloat64(f float64, _alloc func(size int) []byte) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Len:  8,
 		Cap:  8,
+		Data: uintptr(unsafe.Pointer(&u)),
+	}))
+}
+
+func ToFloat32(bs []byte) float32 {
+	u := *(*uint32)(unsafe.Pointer(&bs[0]))
+	return math.Float32frombits(u)
+}
+
+// FromFloat32 is very unsafe, you have make sure to keep the float32 in a value that won't be freed, until you are doing using this slice.
+func FromFloat32(f float32, _alloc func(size int) []byte) []byte {
+	u := math.Float32bits(f)
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  4,
+		Cap:  4,
 		Data: uintptr(unsafe.Pointer(&u)),
 	}))
 }
