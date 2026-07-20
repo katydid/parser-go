@@ -21,16 +21,24 @@ import (
 	"math"
 )
 
-func ToString(buf []byte) string {
-	return string(buf)
-}
-
 func ToInt64(bs []byte) int64 {
 	return int64(binary.LittleEndian.Uint64(bs))
 }
 
+func FromInt64(i int64, alloc func(size int) []byte) []byte {
+	bs := alloc(8)
+	binary.LittleEndian.PutUint64(bs, uint64(i))
+	return bs
+}
+
 func ToUint64(bs []byte) uint64 {
 	return binary.LittleEndian.Uint64(bs)
+}
+
+func FromUint64(i uint64, alloc func(size int) []byte) []byte {
+	bs := alloc(8)
+	binary.LittleEndian.PutUint64(bs, uint64(i))
+	return bs
 }
 
 func ToFloat64(bs []byte) float64 {
@@ -45,16 +53,8 @@ func FromFloat64(f float64, alloc func(size int) []byte) []byte {
 	return bs
 }
 
-func FromUint64(i uint64, alloc func(size int) []byte) []byte {
-	bs := alloc(8)
-	binary.LittleEndian.PutUint64(bs, uint64(i))
-	return bs
-}
-
-func FromInt64(i int64, alloc func(size int) []byte) []byte {
-	bs := alloc(8)
-	binary.LittleEndian.PutUint64(bs, uint64(i))
-	return bs
+func ToString(buf []byte) string {
+	return string(buf)
 }
 
 func FromString(s string, alloc func(size int) []byte) []byte {

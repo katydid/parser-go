@@ -22,22 +22,8 @@ import (
 	"unsafe"
 )
 
-// ToString uses unsafe to cast a byte slice to a string without copying or allocating memory.
-func ToString(buf []byte) string {
-	return unsafe.String(unsafe.SliceData(buf), len(buf))
-}
-
 func ToInt64(bs []byte) int64 {
 	return *(*int64)(unsafe.Pointer(&bs[0]))
-}
-
-func ToUint64(bs []byte) uint64 {
-	return *(*uint64)(unsafe.Pointer(&bs[0]))
-}
-
-func ToFloat64(bs []byte) float64 {
-	u := *(*uint64)(unsafe.Pointer(&bs[0]))
-	return math.Float64frombits(u)
 }
 
 // FromInt64 is very unsafe, you have make sure to keep the int64 in a value that won't be freed, until you are doing using this slice.
@@ -49,6 +35,10 @@ func FromInt64(i int64, _alloc func(size int) []byte) []byte {
 	}))
 }
 
+func ToUint64(bs []byte) uint64 {
+	return *(*uint64)(unsafe.Pointer(&bs[0]))
+}
+
 // FromUint64 is very unsafe, you have make sure to keep the uint64 in a value that won't be freed, until you are doing using this slice.
 func FromUint64(i uint64, _alloc func(size int) []byte) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
@@ -56,6 +46,11 @@ func FromUint64(i uint64, _alloc func(size int) []byte) []byte {
 		Cap:  8,
 		Data: uintptr(unsafe.Pointer(&i)),
 	}))
+}
+
+func ToFloat64(bs []byte) float64 {
+	u := *(*uint64)(unsafe.Pointer(&bs[0]))
+	return math.Float64frombits(u)
 }
 
 // FromFloat64 is very unsafe, you have make sure to keep the float64 in a value that won't be freed, until you are doing using this slice.
@@ -66,6 +61,11 @@ func FromFloat64(f float64, _alloc func(size int) []byte) []byte {
 		Cap:  8,
 		Data: uintptr(unsafe.Pointer(&u)),
 	}))
+}
+
+// ToString uses unsafe to cast a byte slice to a string without copying or allocating memory.
+func ToString(buf []byte) string {
+	return unsafe.String(unsafe.SliceData(buf), len(buf))
 }
 
 func FromString(s string, _alloc func(size int) []byte) []byte {
