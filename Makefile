@@ -20,9 +20,7 @@ test:
 	go clean -testcache
 	go test ./...
 
-testall:
-	go clean -testcache
-	go test ./...
+test-purego:
 	go clean -testcache
 	go test -tags=purego ./...
 

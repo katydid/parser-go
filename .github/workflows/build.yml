@@ -29,7 +29,11 @@ jobs:
     - name: Test
       run: |
         cd gopath/github.com/katydid/parser-go
-        make testall
+        make test
+    - name: Test PureGo
+      run: |
+        cd gopath/github.com/katydid/parser-go
+        make test-purego
     - name: Checklicencse
       uses: awalterschulze/checklicense@v1.0.6
       with:
