@@ -17,7 +17,14 @@
 all: nuke build test
 
 test:
+	go clean -testcache
 	go test ./...
+
+testall:
+	go clean -testcache
+	go test ./...
+	go clean -testcache
+	go test -tags=purego ./...
 
 build:
 	go build ./...

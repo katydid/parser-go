@@ -26,7 +26,7 @@ func ToString(buf []byte) string {
 }
 
 func ToInt64(bs []byte) int64 {
-	return binary.LittleEndian.Uint64(bs)
+	return int64(binary.LittleEndian.Uint64(bs))
 }
 
 func ToUint64(bs []byte) uint64 {
@@ -59,6 +59,6 @@ func FromInt64(i int64, alloc func(size int) []byte) []byte {
 
 func FromString(s string, alloc func(size int) []byte) []byte {
 	bs := alloc(len(s))
-	copy(bs, str)
+	copy(bs, s)
 	return bs
 }
