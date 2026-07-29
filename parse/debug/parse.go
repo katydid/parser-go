@@ -23,8 +23,8 @@ import (
 )
 
 // Parse parses through the whole parser in a top down manner and records the values into a Nodes structute.
-func Parse(p parse.Parser) (Nodes, error) {
-	nodes := make(Nodes, 0)
+func Parse(p parse.Parser) (Hedge, error) {
+	nodes := make(Hedge, 0)
 	for {
 		hint, err := p.Next()
 		if err != nil {
@@ -81,8 +81,8 @@ func Parse(p parse.Parser) (Nodes, error) {
 //	skip is passed to r.Intn and when a zero value is returned the Skip method on the parser is called.
 //
 // RandomParse is great for testing that the implemented parser can handle random skipping of parts of the tree.
-func RandomParse(p parse.Parser, r Rand, next, skip int) (Nodes, error) {
-	nodes := make(Nodes, 0)
+func RandomParse(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
+	nodes := make(Hedge, 0)
 	for {
 		if r.Intn(next) == 0 {
 			return nodes, nil
