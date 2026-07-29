@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 
+	. "github.com/katydid/parser-go/hedge"
 	"github.com/katydid/parser-go/parse"
 )
 

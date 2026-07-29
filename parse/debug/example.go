@@ -14,6 +14,10 @@
 
 package debug
 
+import (
+	. "github.com/katydid/parser-go/hedge"
+)
+
 // Input is a sample instance of the Debug struct.
 var Input = &Debug{
 	A: int64(1),
