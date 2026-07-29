@@ -22,8 +22,8 @@ import (
 	. "github.com/katydid/parser-go/rand"
 )
 
-// Parse parses through the whole parser in a top down manner and records the values into a Nodes structute.
-func Parse(p parse.Parser) (Hedge, error) {
+// ParseInto parses through the whole parser in a top down manner and records the values into a Nodes structute.
+func ParseInto(p parse.Parser) (Hedge, error) {
 	nodes := make(Hedge, 0)
 	for {
 		hint, err := p.Next()
@@ -35,7 +35,7 @@ func Parse(p parse.Parser) (Hedge, error) {
 		}
 		switch hint {
 		case parse.EnterHint:
-			children, err := Parse(p)
+			children, err := ParseInto(p)
 			if err != nil {
 				return nil, err
 			}
@@ -57,7 +57,7 @@ func Parse(p parse.Parser) (Hedge, error) {
 				}
 				nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: []Node{{Label: fmt.Sprintf("%v", val)}}})
 			case parse.EnterHint:
-				children, err := Parse(p)
+				children, err := ParseInto(p)
 				if err != nil {
 					return nil, err
 				}
@@ -81,7 +81,7 @@ func Parse(p parse.Parser) (Hedge, error) {
 //	skip is passed to r.Intn and when a zero value is returned the Skip method on the parser is called.
 //
 // RandomParse is great for testing that the implemented parser can handle random skipping of parts of the tree.
-func RandomParse(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
+func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 	nodes := make(Hedge, 0)
 	for {
 		if r.Intn(next) == 0 {
@@ -96,7 +96,7 @@ func RandomParse(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 		}
 		switch hint {
 		case parse.EnterHint:
-			children, err := Parse(p)
+			children, err := RandomParseInto(p, r, next, skip)
 			if err != nil {
 				return nil, err
 			}
@@ -121,7 +121,7 @@ func RandomParse(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 					}
 					nodes = append(nodes, Node{Label: fmt.Sprintf("%v", name), Children: []Node{{Label: fmt.Sprintf("%v", val)}}})
 				case parse.EnterHint:
-					children, err := Parse(p)
+					children, err := RandomParseInto(p, r, next, skip)
 					if err != nil {
 						return nil, err
 					}
