@@ -38,8 +38,8 @@ var Input = &Debug{
 	F: []uint32{5},
 }
 
-// Output is a sample instance of Nodes that repesents the Input variable after it has been parsed by Walk.
-var Output = Nodes{
+// Output is a sample instance of Hedge that repesents the Input variable after it has been parsed by Walk.
+var Output = Hedge{
 	Field(`A`, `1`),
 	Nested(`B`,
 		Field(`0`, `b2`),

@@ -20,7 +20,7 @@ import "strings"
 // It has a label an children nodes.
 type Node struct {
 	Label    string
-	Children Nodes
+	Children Hedge
 }
 
 // String returns a string representation of Node.
@@ -31,7 +31,10 @@ func (n Node) String() string {
 	return n.Label + ":" + n.Children.String()
 }
 
-// Equal returns whether two Nodes are the same.
+// Hedge is a list of Node.
+type Hedge []Node
+
+// Equal returns whether two Hedges are the same.
 func (n Node) Equal(m Node) bool {
 	if n.Label != m.Label {
 		return false
@@ -42,25 +45,22 @@ func (n Node) Equal(m Node) bool {
 	return true
 }
 
-// Nodes is a list of Node.
-type Nodes []Node
-
 // String returns a string representation of Nodes.
-func (n Nodes) String() string {
-	ss := make([]string, len(n))
-	for i := range n {
-		ss[i] = n[i].String()
+func (h Hedge) String() string {
+	ss := make([]string, len(h))
+	for i := range h {
+		ss[i] = h[i].String()
 	}
 	return "{" + strings.Join(ss, ",") + "}"
 }
 
 // Equal returns whether two Node lists are equal.
-func (n Nodes) Equal(m Nodes) bool {
-	if len(n) != len(m) {
+func (h Hedge) Equal(g Hedge) bool {
+	if len(h) != len(g) {
 		return false
 	}
-	for i := range n {
-		if !n[i].Equal(m[i]) {
+	for i := range h {
+		if !h[i].Equal(g[i]) {
 			return false
 		}
 	}
@@ -72,7 +72,7 @@ func (n Nodes) Equal(m Nodes) bool {
 func Field(name string, value string) Node {
 	return Node{
 		Label: name,
-		Children: Nodes{
+		Children: Hedge{
 			Node{
 				Label: value,
 			},
@@ -84,6 +84,6 @@ func Field(name string, value string) Node {
 func Nested(name string, fs ...Node) Node {
 	return Node{
 		Label:    name,
-		Children: Nodes(fs),
+		Children: Hedge(fs),
 	}
 }
