@@ -20,6 +20,7 @@ import (
 
 	. "github.com/katydid/parser-go/hedge"
 	"github.com/katydid/parser-go/parse"
+	. "github.com/katydid/parser-go/rand"
 )
 
 // Parse parses through the whole parser in a top down manner and records the values into a Nodes structute.

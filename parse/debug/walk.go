@@ -18,6 +18,7 @@ import (
 	"io"
 
 	"github.com/katydid/parser-go/parse"
+	. "github.com/katydid/parser-go/rand"
 )
 
 // Walk walks through the whole parser in a top down manner.
