@@ -12,13 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package debug
+package hedge
 
 import (
 	"fmt"
 	"io"
 
-	. "github.com/katydid/parser-go/hedge"
 	"github.com/katydid/parser-go/parse"
 	. "github.com/katydid/parser-go/rand"
 )
