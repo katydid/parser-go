@@ -24,83 +24,83 @@ func alloc(size int) []byte {
 	return make([]byte, size)
 }
 
-type doubleValue struct {
+type doubleToken struct {
 	v float64
 }
 
-// NewDoubleValue wraps a native go type into a parse.Token.
-func NewDoubleValue(v float64) parse.Token {
-	return &doubleValue{v}
+// NewDoubleToken wraps a native go type into a parse.Token.
+func NewDoubleToken(v float64) parse.Token {
+	return &doubleToken{v}
 }
 
-func (v *doubleValue) Token() (parse.Kind, []byte, error) {
+func (v *doubleToken) Token() (parse.Kind, []byte, error) {
 	return parse.Float64Kind, cast.FromFloat64(v.v, alloc), nil
 }
 
-type intValue struct {
+type intToken struct {
 	v int64
 }
 
-// NewIntValue wraps a native go type into a parse.Token.
-func NewIntValue(v int64) parse.Token {
-	return &intValue{v}
+// NewIntToken wraps a native go type into a parse.Token.
+func NewIntToken(v int64) parse.Token {
+	return &intToken{v}
 }
 
-func (v *intValue) Token() (parse.Kind, []byte, error) {
+func (v *intToken) Token() (parse.Kind, []byte, error) {
 	return parse.Float64Kind, cast.FromInt64(v.v, alloc), nil
 }
 
-type uintValue struct {
+type uintToken struct {
 	v uint64
 }
 
-// NewUintValue wraps a native go type into a parse.Token.
-func NewUintValue(v uint64) parse.Token {
-	return &uintValue{v}
+// NewUintToken wraps a native go type into a parse.Token.
+func NewUintToken(v uint64) parse.Token {
+	return &uintToken{v}
 }
 
-func (v *uintValue) Token() (parse.Kind, []byte, error) {
+func (v *uintToken) Token() (parse.Kind, []byte, error) {
 	return parse.Float64Kind, cast.FromUint64(v.v, alloc), nil
 }
 
-type boolValue struct {
+type boolToken struct {
 	v bool
 }
 
-// NewBoolValue wraps a native go type into a parse.Token.
-func NewBoolValue(v bool) parse.Token {
-	return &boolValue{v}
+// NewBoolToken wraps a native go type into a parse.Token.
+func NewBoolToken(v bool) parse.Token {
+	return &boolToken{v}
 }
 
-func (v *boolValue) Token() (parse.Kind, []byte, error) {
+func (v *boolToken) Token() (parse.Kind, []byte, error) {
 	if v.v {
 		return parse.TrueKind, nil, nil
 	}
 	return parse.FalseKind, nil, nil
 }
 
-type stringValue struct {
+type stringToken struct {
 	v string
 }
 
-// NewStringValue wraps a native go type into a parse.Token.
-func NewStringValue(v string) parse.Token {
-	return &stringValue{v}
+// NewStringToken wraps a native go type into a parse.Token.
+func NewStringToken(v string) parse.Token {
+	return &stringToken{v}
 }
 
-func (v *stringValue) Token() (parse.Kind, []byte, error) {
+func (v *stringToken) Token() (parse.Kind, []byte, error) {
 	return parse.StringKind, cast.FromString(v.v, alloc), nil
 }
 
-type bytesValue struct {
+type bytesToken struct {
 	v []byte
 }
 
-// NewBytesValue wraps a native go type into a parse.Token.
-func NewBytesValue(v []byte) parse.Token {
-	return &bytesValue{v}
+// NewBytesToken wraps a native go type into a parse.Token.
+func NewBytesToken(v []byte) parse.Token {
+	return &bytesToken{v}
 }
 
-func (v *bytesValue) Token() (parse.Kind, []byte, error) {
+func (v *bytesToken) Token() (parse.Kind, []byte, error) {
 	return parse.BytesKind, v.v, nil
 }
