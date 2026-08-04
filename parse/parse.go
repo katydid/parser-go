@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/katydid/parser-go/cast"
+	"katydid.org.za/go/parser-go/cast"
 )
 
 type Parser interface {

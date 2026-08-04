@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/katydid/parser-go/parser"
+	"katydid.org.za/go/parser-go/parser"
 )
 
 // Parse parses through the whole parser in a top down manner and records the values into a Nodes structute.

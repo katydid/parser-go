@@ -17,8 +17,8 @@ package debug
 import (
 	"io"
 
-	"github.com/katydid/parser-go/parse"
-	. "github.com/katydid/parser-go/rand"
+	"katydid.org.za/go/parser-go/parse"
+	. "katydid.org.za/go/parser-go/rand"
 )
 
 // Walk walks through the whole parser in a top down manner.

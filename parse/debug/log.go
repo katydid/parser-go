@@ -17,8 +17,8 @@ package debug
 import (
 	"time"
 
-	"github.com/katydid/parser-go/log"
-	"github.com/katydid/parser-go/parse"
+	"katydid.org.za/go/parser-go/log"
+	"katydid.org.za/go/parser-go/parse"
 )
 
 // Logger is an interface for a type that is made to log debug info.

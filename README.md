@@ -17,7 +17,7 @@ This includes tools for developing implementations of the parser interface, for 
 If you want to use a parser for you own use case, here is a simple walk function:
 
 ```go
-import "github.com/katydid/parser-go/parse"
+import "katydid.org.za/go/parser-go/parse"
 
 func Walk(p parse.Parser) error {
 	for {

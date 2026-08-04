@@ -18,9 +18,9 @@ package downgrade
 import (
 	"io"
 
-	"github.com/katydid/parser-go/cast"
-	"github.com/katydid/parser-go/parse"
-	"github.com/katydid/parser-go/parser"
+	"katydid.org.za/go/parser-go/cast"
+	"katydid.org.za/go/parser-go/parse"
+	"katydid.org.za/go/parser-go/parser"
 )
 
 type parserWithInit interface {

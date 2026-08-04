@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/katydid/parser-go/parse"
-	. "github.com/katydid/parser-go/rand"
+	"katydid.org.za/go/parser-go/parse"
+	. "katydid.org.za/go/parser-go/rand"
 )
 
 // ParseInto parses through the whole parser in a top down manner and records the values into a Nodes structute.

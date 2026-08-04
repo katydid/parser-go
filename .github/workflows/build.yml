@@ -9,14 +9,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        path: gopath/github.com/katydid/parser-go
+        path: gopath/katydid.org.za/go/parser-go
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
         go-version: 1.24
     - name: Fetch dependencies
       run: |
-        cd gopath/github.com/katydid/parser-go
+        cd gopath/katydid.org.za/go/parser-go
         go mod download -x
     - name: env
       run: env && go env && pwd
@@ -24,15 +24,15 @@ jobs:
       run: tree
     - name: Build
       run: |
-        cd gopath/github.com/katydid/parser-go
+        cd gopath/katydid.org.za/go/parser-go
         make build
     - name: Test
       run: |
-        cd gopath/github.com/katydid/parser-go
+        cd gopath/katydid.org.za/go/parser-go
         make test
     - name: Test PureGo
       run: |
-        cd gopath/github.com/katydid/parser-go
+        cd gopath/katydid.org.za/go/parser-go
         make test-purego
     - name: Checklicencse
       uses: awalterschulze/checklicense@v1.0.6
@@ -40,5 +40,5 @@ jobs:
         ignores: doc.go tools/tools.go .svg .txt
     - name: Diff
       run: |
-        cd gopath/github.com/katydid/parser-go
+        cd gopath/katydid.org.za/go/parser-go
         make diff

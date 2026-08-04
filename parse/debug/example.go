@@ -15,7 +15,7 @@
 package debug
 
 import (
-	. "github.com/katydid/parser-go/hedge"
+	. "katydid.org.za/go/parser-go/hedge"
 )
 
 // Input is a sample instance of the Debug struct.

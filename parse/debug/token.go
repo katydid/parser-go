@@ -15,8 +15,8 @@
 package debug
 
 import (
-	"github.com/katydid/parser-go/cast"
-	"github.com/katydid/parser-go/parse"
+	"katydid.org.za/go/parser-go/cast"
+	"katydid.org.za/go/parser-go/parse"
 )
 
 // These functions are only for debugging purposes, so does not need to be optimized with a pool.
