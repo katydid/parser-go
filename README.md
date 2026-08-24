@@ -1,16 +1,16 @@
 ## parser-go
 
-[Parser](https://github.com/katydid/parser) interface for Go.
+[Parser](https://git.katydid.org.za/parser) interface for Go.
 
 This includes tools for developing implementations of the parser interface, for example the `debug` package.
 
 ## Implementations
 
-* [JSON](https://github.com/katydid/parser-go-json)
-* [Protobufs](https://github.com/katydid/parser-go-proto)
-* [XML](https://github.com/katydid/parser-go-xml)
-* [YAML](https://github.com/katydid/parser-go-yaml)
-* [Reflect](https://github.com/katydid/parser-go-reflect)
+* [JSON](https://git.katydid.org.za/parser-go-json)
+* [Protobufs](https://git.katydid.org.za/parser-go-proto)
+* [XML](https://git.katydid.org.za/parser-go-xml)
+* [YAML](https://git.katydid.org.za/parser-go-yaml)
+* [Reflect](https://git.katydid.org.za/parser-go-reflect)
 
 ## Using the parser
 
@@ -66,10 +66,10 @@ type Parser interface {
 
 This interface allows for the implementation of an online pull based parser.
 That is a parser that lazily parses the input as the methods are called and only parses the input once, without backtracking. 
-Exercising the parser can be done with the [debug.Parse](https://pkg.go.dev/github.com/katydid/parser-go/parse/debug#Parse) function. 
+Exercising the parser can be done with the [debug.Parse](https://godoc.org/katydid.org.za/go/parser-go/parse/debug#Parse) function. 
 The `Walk` function also returns some debugging output, which should be useful in the development of your own parser.
 
 Your parser should also be able to handle skipping of some of the input, via the `Skip` method. 
-The [debug.RandomParse](https://pkg.go.dev/github.com/katydid/parser-go/parse/debug#RandomParse) function is useful for testing this type of robustness in your parser.
+The [debug.RandomParse](https://godoc.org/katydid.org.za/go/parser-go/parse/debug#RandomParse) function is useful for testing this type of robustness in your parser.
 
-See the [Parser Documentation](https://github.com/katydid/parser) for more details.
+See the [Parser Documentation](https://git.katydid.org.za/parser) for more details.
