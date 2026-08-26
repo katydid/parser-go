@@ -17,7 +17,7 @@ package log
 import (
 	"time"
 
-	"katydid.org.za/go/parser-go/log"
+	"katydid.org.za/go/parser-go/logger"
 )
 
 type options struct {
@@ -55,12 +55,12 @@ func newOptions(opts ...Option) *options {
 }
 
 func newLogger(o *options) Logger {
-	logopts := []log.Option{}
+	logopts := []logger.Option{}
 	if o.lineNumbers {
-		logopts = append(logopts, log.WithLineNumbers())
+		logopts = append(logopts, logger.WithLineNumbers())
 	}
 	if o.delay != nil {
-		logopts = append(logopts, log.WithDelay(*o.delay))
+		logopts = append(logopts, logger.WithDelay(*o.delay))
 	}
-	return log.NewLogger(logopts...)
+	return logger.New(logopts...)
 }

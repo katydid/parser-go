@@ -17,7 +17,7 @@ package debug
 import (
 	"time"
 
-	"katydid.org.za/go/parser-go/log"
+	"katydid.org.za/go/parser-go/logger"
 	"katydid.org.za/go/parser-go/parser"
 )
 
@@ -28,13 +28,13 @@ type Logger interface {
 
 // NewLineLogger returns a logger that logs the line at which the Printf method was called to stderr.
 func NewLineLogger() Logger {
-	return log.NewLogger(log.WithLineNumbers())
+	return logger.New(logger.WithLineNumbers())
 }
 
 // NewDelayLogger returns a logger that sleeps after every log.
 // This is useful for debugging infinite loops.
 func NewDelayLogger(delay time.Duration) Logger {
-	return log.NewLogger(log.WithLineNumbers(), log.WithDelay(delay))
+	return logger.New(logger.WithLineNumbers(), logger.WithDelay(delay))
 }
 
 type l struct {
