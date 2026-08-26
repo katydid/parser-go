@@ -12,12 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package debug
+package log
 
 import (
-	"time"
-
-	"katydid.org.za/go/parser-go/log"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -26,27 +23,20 @@ type Logger interface {
 	Printf(format string, v ...any)
 }
 
-// NewLineLogger returns a logger that logs the line at which the Printf method was called to stderr.
-func NewLineLogger() Logger {
-	return log.NewLogger(log.WithLineNumbers())
-}
-
-// NewDelayLogger returns a logger that sleeps after every log.
-// This is useful for debugging infinite loops.
-func NewDelayLogger(delay time.Duration) Logger {
-	return log.NewLogger(log.WithLineNumbers(), log.WithDelay(delay))
-}
-
 type l struct {
-	name   string
-	p      parse.ParserWithInit
-	l      Logger
-	copies int
+	name string
+	p    parse.ParserWithInit
+	l    Logger
 }
 
-// NewLogger returns a parser that when called returns and logs the value returned by the argument parser to the argument logger.
-func NewLogger(p parse.ParserWithInit, logger Logger) parse.ParserWithInit {
-	return &l{"parser", p, logger, 0}
+// NewLoggerWithInit returns a ParserWithInit that when called returns and logs the value returned by the argument parser to the argument logger.
+func NewLoggerWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWithInit {
+	return &l{"parser", p, newLogger(newOptions(opts...))}
+}
+
+// NewLogger returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
+func NewLogger(p parse.Parser, opts ...Option) parse.Parser {
+	return &l{"parser", parse.WithNoopInit(p), newLogger(newOptions(opts...))}
 }
 
 func (l *l) Init(buf []byte) {

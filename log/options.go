@@ -38,19 +38,19 @@ func newOptions(opts ...Option) *options {
 	return options
 }
 
-func WithLogger(l Logger) func(*options) {
+func WithLogger(l Logger) Option {
 	return func(o *options) {
 		o.logger = l
 	}
 }
 
-func WithLineNumbers() func(*options) {
+func WithLineNumbers() Option {
 	return func(o *options) {
 		o.lineNumbers = true
 	}
 }
 
-func WithDelay(delay time.Duration) func(*options) {
+func WithDelay(delay time.Duration) Option {
 	return func(o *options) {
 		o.delay = &delay
 	}

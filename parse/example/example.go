@@ -12,20 +12,30 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package debug
+package example
 
 import (
 	. "katydid.org.za/go/parser-go/hedge"
 )
 
-// Input is a sample instance of the Debug struct.
-var Input = &Debug{
+type Example struct {
+	A int64
+	B []string   `json:"B,omitempty"`
+	C *Example   `json:"C,omitempty"`
+	D *int32     `json:"D,omitempty"`
+	E []*Example `json:"E,omitempty"`
+	F []uint32   `json:"F,omitempty"`
+	G *float64   `json:"G,omitempty"`
+}
+
+// Input is a sample instance of the Example struct.
+var Input = &Example{
 	A: int64(1),
 	B: []string{"b2", "b3"},
-	C: &Debug{
+	C: &Example{
 		A: int64(2),
 		D: ptr(int32(3)),
-		E: []*Debug{
+		E: []*Example{
 			{
 				B: []string{"b4"},
 			},
