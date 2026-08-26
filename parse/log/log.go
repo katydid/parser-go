@@ -29,13 +29,13 @@ type l struct {
 	l    Logger
 }
 
-// NewLoggerWithInit returns a ParserWithInit that when called returns and logs the value returned by the argument parser to the argument logger.
-func NewLoggerWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWithInit {
+// WrapParserWithInit returns a ParserWithInit that when called returns and logs the value returned by the argument parser to the argument logger.
+func WrapParserWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWithInit {
 	return &l{"parser", p, newLogger(newOptions(opts...))}
 }
 
-// NewLogger returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
-func NewLogger(p parse.Parser, opts ...Option) parse.Parser {
+// WrapParser returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
+func WrapParser(p parse.Parser, opts ...Option) parse.Parser {
 	return &l{"parser", parse.WithNoopInit(p), newLogger(newOptions(opts...))}
 }
 
