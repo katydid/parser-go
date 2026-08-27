@@ -51,58 +51,58 @@ func NewLogger(s parser.Interface, logger Logger) parser.Interface {
 
 func (l *l) Double() (float64, error) {
 	v, err := l.s.Double()
-	l.l.Printf(l.name+".Double() (%v, %v)", v, err)
+	l.l.Printf("%s.Double() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) Int() (int64, error) {
 	v, err := l.s.Int()
-	l.l.Printf(l.name+".Int() (%v, %v)", v, err)
+	l.l.Printf("%s.Int() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) Uint() (uint64, error) {
 	v, err := l.s.Uint()
-	l.l.Printf(l.name+".Uint() (%v, %v)", v, err)
+	l.l.Printf("%s.Uint() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) Bool() (bool, error) {
 	v, err := l.s.Bool()
-	l.l.Printf(l.name+".Bool() (%v, %v)", v, err)
+	l.l.Printf("%s.Bool() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) String() (string, error) {
 	v, err := l.s.String()
-	l.l.Printf(l.name+".String() (%v, %v)", v, err)
+	l.l.Printf("%s.String() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) Bytes() ([]byte, error) {
 	v, err := l.s.Bytes()
-	l.l.Printf(l.name+".Bytes() (%v, %v)", v, err)
+	l.l.Printf("%s.Bytes() (%v, %v)", l.name, v, err)
 	return v, err
 }
 
 func (l *l) Next() error {
 	err := l.s.Next()
-	l.l.Printf(l.name+".Next() (%v)", err)
+	l.l.Printf("%s.Next() (%v)", l.name, err)
 	return err
 }
 
 func (l *l) IsLeaf() bool {
 	v := l.s.IsLeaf()
-	l.l.Printf(l.name+".IsLeaf() (%v)", v)
+	l.l.Printf("%s.IsLeaf() (%v)", l.name, v)
 	return v
 }
 
 func (l *l) Up() {
 	l.s.Up()
-	l.l.Printf(l.name + ".Up()")
+	l.l.Printf("%s.Up()", l.name)
 }
 
 func (l *l) Down() {
 	l.s.Down()
-	l.l.Printf(l.name + ".Down()")
+	l.l.Printf("%s.Down()", l.name)
 }

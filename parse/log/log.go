@@ -15,6 +15,8 @@
 package log
 
 import (
+	"bytes"
+
 	"katydid.org.za/go/parser-go/hedge"
 	"katydid.org.za/go/parser-go/parse"
 )
@@ -42,29 +44,29 @@ func WrapParser(p parse.Parser, opts ...Option) parse.Parser {
 
 func (l *l) Init(buf []byte) {
 	l.p.Init(buf)
-	l.l.Printf(l.name + ".Init(...)")
+	l.l.Printf("%s.Init(...)", l.name)
 }
 
 func (l *l) Next() (parse.Hint, error) {
 	hint, err := l.p.Next()
-	l.l.Printf(l.name+".Next() (%v, %v)", hint, err)
+	l.l.Printf("%s.Next() (%v, %v)", l.name, hint, err)
 	return hint, err
 }
 
 func (l *l) Skip() error {
 	err := l.p.Skip()
-	l.l.Printf(l.name+".Skip() (%v)", err)
+	l.l.Printf("%s.Skip() (%v)", l.name, err)
 	return err
 }
 
 func (l *l) Token() (parse.Kind, []byte, error) {
 	kind, val, err := l.p.Token()
+	val = bytes.Clone(val)
 	tok, tokerr := hedge.NewToken(kind, val, err)
 	if tokerr != nil {
-		l.l.Printf(l.name+".Token() (%v, %v, %v) hedge.NewToken() (%v)", kind, val, err, tokerr)
+		l.l.Printf("%s.Token() (%v, %v, %v) hedge.NewToken() (%v)", l.name, kind, val, err, tokerr)
 	} else {
-		l.l.Printf(l.name+".Token() (%v, %v, %v)", kind, tok, err)
+		l.l.Printf("%s.Token() (%v, %v, %v)", l.name, kind, tok, err)
 	}
-	kind, val, err = tok.Token(func(size int) []byte { return make([]byte, size) })
 	return kind, val, err
 }

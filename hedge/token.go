@@ -98,7 +98,6 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	if err != nil {
 		return Token{}, err
 	}
-	b = bytes.Clone(b)
 	t := &Token{kind: kind, b: b}
 	switch kind {
 	case parse.UnknownKind:

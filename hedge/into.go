@@ -15,6 +15,7 @@
 package hedge
 
 import (
+	"bytes"
 	"io"
 
 	"katydid.org.za/go/parser-go/parse"
@@ -40,7 +41,9 @@ func ParseInto(p parse.Parser) (Hedge, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			name, err := NewToken(p.Token())
+			kind, val, err := p.Token()
+			val = bytes.Clone(val)
+			name, err := NewToken(kind, val, err)
 			if err != nil {
 				return nil, err
 			}
@@ -50,7 +53,9 @@ func ParseInto(p parse.Parser) (Hedge, error) {
 			}
 			switch childHint {
 			case parse.ValueHint:
-				value, err := NewToken(p.Token())
+				kind, val, err := p.Token()
+				val = bytes.Clone(val)
+				value, err := NewToken(kind, val, err)
 				if err != nil {
 					return nil, err
 				}
@@ -63,7 +68,9 @@ func ParseInto(p parse.Parser) (Hedge, error) {
 				nodes = append(nodes, Node{Label: name, Children: children})
 			}
 		case parse.ValueHint:
-			value, err := NewToken(p.Token())
+			kind, val, err := p.Token()
+			val = bytes.Clone(val)
+			value, err := NewToken(kind, val, err)
 			if err != nil {
 				return nil, err
 			}
@@ -101,7 +108,9 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			name, err := NewToken(p.Token())
+			kind, val, err := p.Token()
+			val = bytes.Clone(val)
+			name, err := NewToken(kind, val, err)
 			if err != nil {
 				return nil, err
 			}
@@ -114,7 +123,9 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 				}
 				switch childHint {
 				case parse.ValueHint:
-					value, err := NewToken(p.Token())
+					kind, val, err := p.Token()
+					val = bytes.Clone(val)
+					value, err := NewToken(kind, val, err)
 					if err != nil {
 						return nil, err
 					}
@@ -128,7 +139,9 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 				}
 			}
 		case parse.ValueHint:
-			value, err := NewToken(p.Token())
+			kind, val, err := p.Token()
+			val = bytes.Clone(val)
+			value, err := NewToken(kind, val, err)
 			if err != nil {
 				return nil, err
 			}
