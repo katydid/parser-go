@@ -19,16 +19,16 @@ import "strings"
 // Node is a type that represents a node in a tree.
 // It has a label an children nodes.
 type Node struct {
-	Label    string
+	Label    Token
 	Children Hedge
 }
 
 // String returns a string representation of Node.
 func (n Node) String() string {
 	if len(n.Children) == 0 {
-		return n.Label
+		return n.Label.String()
 	}
-	return n.Label + ":" + n.Children.String()
+	return n.Label.String() + ":" + n.Children.String()
 }
 
 // Hedge is a list of Node.
@@ -36,7 +36,7 @@ type Hedge []Node
 
 // Equal returns whether two Hedges are the same.
 func (n Node) Equal(m Node) bool {
-	if n.Label != m.Label {
+	if !n.Label.Equal(m.Label) {
 		return false
 	}
 	if !n.Children.Equal(m.Children) {
@@ -71,10 +71,10 @@ func (h Hedge) Equal(g Hedge) bool {
 // This is how a field with a value is typically represented.
 func Field(name string, value string) Node {
 	return Node{
-		Label: name,
+		Label: NewStringToken(name),
 		Children: Hedge{
 			Node{
-				Label: value,
+				Label: NewStringToken(value),
 			},
 		},
 	}
@@ -83,7 +83,7 @@ func Field(name string, value string) Node {
 // Nested is a helper function for creating a Node.
 func Nested(name string, fs ...Node) Node {
 	return Node{
-		Label:    name,
+		Label:    NewStringToken(name),
 		Children: Hedge(fs),
 	}
 }

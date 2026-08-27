@@ -22,7 +22,7 @@ import (
 	"katydid.org.za/go/parser-go/parse"
 )
 
-func TestLog(t *testing.T) {
+func TestParse(t *testing.T) {
 	p := hedge.NewParser(Output)
 	expect.Hint(t, p, parse.EnterHint)
 
@@ -116,4 +116,15 @@ func TestLog(t *testing.T) {
 
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.EOF(t, p)
+}
+
+func TestRoundtrip(t *testing.T) {
+	p := hedge.NewParser(Output)
+	got, err := hedge.ParseInto(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.Equal(Output) {
+		t.Fatalf("roundtrip failed got %v", got)
+	}
 }

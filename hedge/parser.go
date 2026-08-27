@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"io"
 
-	"katydid.org.za/go/parser-go/cast"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -33,8 +32,8 @@ const eofState = state(5)
 
 type parser struct {
 	current state
-	k       string
-	v       string
+	k       Token
+	v       Token
 	h       Hedge
 	stack   []Hedge
 	alloc   func(size int) []byte
@@ -142,11 +141,11 @@ func (p *parser) Token() (parse.Kind, []byte, error) {
 	case openedState:
 		return parse.UnknownKind, nil, fmt.Errorf("unknown Token")
 	case valueState:
-		return parse.StringKind, cast.FromString(p.v, p.alloc), nil
+		return p.v.Token(p.alloc)
 	case pairState:
-		return parse.StringKind, cast.FromString(p.k, p.alloc), nil
+		return p.k.Token(p.alloc)
 	case fieldState:
-		return parse.StringKind, cast.FromString(p.k, p.alloc), nil
+		return p.k.Token(p.alloc)
 	case eofState:
 		return parse.UnknownKind, nil, fmt.Errorf("unknown Token")
 	}
