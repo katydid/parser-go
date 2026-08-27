@@ -29,6 +29,16 @@ func TestCastInt64(t *testing.T) {
 	}
 }
 
+func TestCastInt64Ptr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := int64(123)
+	bs := FromInt64Ptr(&want, alloc)
+	got := ToInt64(bs)
+	if got != want {
+		t.Fatalf("want %d got %d", want, got)
+	}
+}
+
 func TestCastMaxInt64(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int64(math.MaxInt64)
@@ -39,10 +49,30 @@ func TestCastMaxInt64(t *testing.T) {
 	}
 }
 
+func TestCastMaxInt64Ptr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := int64(math.MaxInt64)
+	bs := FromInt64Ptr(&want, alloc)
+	got := ToInt64(bs)
+	if got != want {
+		t.Fatalf("want %d got %d", want, got)
+	}
+}
+
 func TestCastMinInt64(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int64(math.MinInt64)
 	bs := FromInt64(want, alloc)
+	got := ToInt64(bs)
+	if got != want {
+		t.Fatalf("want %d got %d", want, got)
+	}
+}
+
+func TestCastMinInt64Ptr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := int64(math.MinInt64)
+	bs := FromInt64Ptr(&want, alloc)
 	got := ToInt64(bs)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)

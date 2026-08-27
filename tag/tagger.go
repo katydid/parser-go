@@ -268,7 +268,7 @@ func (t *tagger) Token() (parse.Kind, []byte, error) {
 	case arrayTagKeyOpenState:
 		return parse.TagKind, arrayTagToken, nil
 	case arrayTagElemState:
-		return parse.Int64Kind, cast.FromInt64(t.state.arrayIndex, t.alloc), nil
+		return parse.Int64Kind, cast.FromInt64Ptr(&t.state.arrayIndex, t.alloc), nil
 	}
 	return t.p.Token()
 }

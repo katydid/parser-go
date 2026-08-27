@@ -47,7 +47,7 @@ func NewIntToken(v int64) parse.Token {
 }
 
 func (v *intToken) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromInt64(v.v, alloc), nil
+	return parse.Float64Kind, cast.FromInt64Ptr(&v.v, alloc), nil
 }
 
 type uintToken struct {

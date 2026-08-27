@@ -37,6 +37,24 @@ func TestAllocCastInt64(t *testing.T) {
 	}
 }
 
+func TestAllocCastInt64Ptr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	f := func() {
+		want := int64(1233456578)
+		bs := FromInt64Ptr(&want, alloc)
+		got := ToInt64(bs)
+		if got != want {
+			t.Fatalf("want %d got %d", want, got)
+		}
+	}
+	for i := 0; i < 10000; i++ {
+		allocs := testing.AllocsPerRun(1, f)
+		if allocs > 0 {
+			t.Fatalf("Cast Allocs = %f", allocs)
+		}
+	}
+}
+
 // The deprecated unsafe version of FromInt32 never allocates.
 func TestAllocCastInt32(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }

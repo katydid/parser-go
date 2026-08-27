@@ -150,14 +150,14 @@ func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	case parse.StringKind:
 		return parse.StringKind, cast.FromString(t.s, alloc), nil
 	case parse.Int64Kind:
-		return parse.Int64Kind, cast.FromInt64(t.i, alloc), nil
+		return parse.Int64Kind, cast.FromInt64Ptr(&t.i, alloc), nil
 	case parse.Float64Kind:
 		kind, val := parse.Float64Kind, cast.FromFloat64(t.f, alloc)
 		return kind, val, nil
 	case parse.DecimalKind:
 		return parse.DecimalKind, cast.FromString(t.s, alloc), nil
 	case parse.NanosecondsKind:
-		return parse.NanosecondsKind, cast.FromInt64(t.i, alloc), nil
+		return parse.NanosecondsKind, cast.FromInt64Ptr(&t.i, alloc), nil
 	case parse.DateTimeKind:
 		return parse.DateTimeKind, cast.FromString(t.s, alloc), nil
 	case parse.TagKind:

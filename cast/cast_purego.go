@@ -31,6 +31,12 @@ func FromInt64(i int64, alloc func(size int) []byte) []byte {
 	return bs
 }
 
+func FromInt64Ptr(i *int64, alloc func(size int) []byte) []byte {
+	bs := alloc(8)
+	binary.LittleEndian.PutUint64(bs, uint64(*i))
+	return bs
+}
+
 func ToInt32(bs []byte) int32 {
 	return int32(binary.LittleEndian.Uint32(bs))
 }
