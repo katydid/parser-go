@@ -85,6 +85,18 @@ func (h Hedge) Equal(g Hedge) bool {
 	return true
 }
 
+func (h Hedge) VerboseEqual(g Hedge) error {
+	if len(h) != len(g) {
+		return fmt.Errorf("different number of nodes")
+	}
+	for i := range h {
+		if err := h[i].VerboseEqual(g[i]); err != nil {
+			return fmt.Errorf("%d.%v", i, err)
+		}
+	}
+	return nil
+}
+
 // Field is a helper function for creating a Node with a label and one child label.
 // This is how a field with a value is typically represented.
 func Field(name string, value string) Node {
