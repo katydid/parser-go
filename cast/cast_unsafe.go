@@ -28,11 +28,7 @@ func ToInt64(bs []byte) int64 {
 
 // FromInt64 is very unsafe, you have make sure to keep the int64 in a value that won't be freed, until you are doing using this slice.
 func FromInt64(i int64, _alloc func(size int) []byte) []byte {
-	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
-		Len:  8,
-		Cap:  8,
-		Data: uintptr(unsafe.Pointer(&i)),
-	}))
+	return unsafe.Slice((*byte)(unsafe.Pointer(&i)), 8)
 }
 
 func ToInt32(bs []byte) int32 {
@@ -109,6 +105,26 @@ func ToString(buf []byte) string {
 	return unsafe.String(unsafe.SliceData(buf), len(buf))
 }
 
+// FromString uses unsafe to cast from a string to a slice of byte.
 func FromString(s string, _alloc func(size int) []byte) []byte {
+	return unsafeBetBytesClassic(s)
+}
+
+func unsafeBetBytesClassic(s string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&s))
+}
+
+// https://stackoverflow.com/a/69231355
+func unsafeGetBytesYenForYang(s string) []byte {
+	const MaxInt32 = 1<<31 - 1
+	return (*[MaxInt32]byte)(unsafe.Pointer((*reflect.StringHeader)(
+		unsafe.Pointer(&s)).Data))[: len(s)&MaxInt32 : len(s)&MaxInt32]
+}
+
+// https://stackoverflow.com/questions/59209493/how-to-use-unsafe-get-a-byte-slice-from-a-string-without-memory-copy/69231355#comment130999637_69231355
+func unsafeGetBytesNunoCruces(s string) []byte {
+	return *(*[]byte)(unsafe.Pointer(&struct {
+		string
+		int
+	}{s, len(s)}))
 }
