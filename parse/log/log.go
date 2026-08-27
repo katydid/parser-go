@@ -15,6 +15,8 @@
 package log
 
 import (
+	"katydid.org.za/go/parser-go/cp"
+	"katydid.org.za/go/parser-go/hedge"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -58,11 +60,12 @@ func (l *l) Skip() error {
 
 func (l *l) Token() (parse.Kind, []byte, error) {
 	kind, val, err := l.p.Token()
-	value, valerr := parse.GetValue(l.p)
-	if valerr != nil {
-		l.l.Printf(l.name+".Token() (%v, %v, %v) parse.GetValue() (%v)", kind, val, err, valerr)
+	val = cp.Bytes(val)
+	tok, tokerr := hedge.NewToken(kind, val, err)
+	if tokerr != nil {
+		l.l.Printf(l.name+".Token() (%v, %v, %v) parse.GetValue() (%v)", kind, val, err, tokerr)
 	} else {
-		l.l.Printf(l.name+".Token() (%v, %v, %v)", kind, value, err)
+		l.l.Printf(l.name+".Token() (%v, %v, %v)", kind, tok, err)
 	}
 	return kind, val, err
 }

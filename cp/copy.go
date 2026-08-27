@@ -20,7 +20,9 @@ import (
 )
 
 func ToInt64(bs []byte) int64 {
-	return int64(binary.LittleEndian.Uint64(bs))
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	return int64(binary.LittleEndian.Uint64(res))
 }
 
 func FromInt64(i int64) []byte {
@@ -30,7 +32,9 @@ func FromInt64(i int64) []byte {
 }
 
 func ToInt32(bs []byte) int32 {
-	return int32(binary.LittleEndian.Uint32(bs))
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	return int32(binary.LittleEndian.Uint32(res))
 }
 
 func FromInt32(i int32) []byte {
@@ -40,7 +44,9 @@ func FromInt32(i int32) []byte {
 }
 
 func ToUint64(bs []byte) uint64 {
-	return binary.LittleEndian.Uint64(bs)
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	return binary.LittleEndian.Uint64(res)
 }
 
 func FromUint64(i uint64) []byte {
@@ -50,7 +56,9 @@ func FromUint64(i uint64) []byte {
 }
 
 func ToUint32(bs []byte) uint32 {
-	return binary.LittleEndian.Uint32(bs)
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	return binary.LittleEndian.Uint32(res)
 }
 
 func FromUint32(i uint32) []byte {
@@ -60,7 +68,9 @@ func FromUint32(i uint32) []byte {
 }
 
 func ToFloat64(bs []byte) float64 {
-	u := binary.LittleEndian.Uint64(bs)
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	u := binary.LittleEndian.Uint64(res)
 	return math.Float64frombits(u)
 }
 
@@ -72,7 +82,9 @@ func FromFloat64(f float64) []byte {
 }
 
 func ToFloat32(bs []byte) float32 {
-	u := binary.LittleEndian.Uint32(bs)
+	res := make([]byte, len(bs))
+	copy(res, bs)
+	u := binary.LittleEndian.Uint32(res)
 	return math.Float32frombits(u)
 }
 

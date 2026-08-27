@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"katydid.org.za/go/parser-go/cast"
-	"katydid.org.za/go/parser-go/cp"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -113,21 +112,21 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	case parse.TrueKind:
 		return NewTrueToken(), nil
 	case parse.BytesKind:
-		return NewBytesToken(cp.Bytes(b)), nil
+		return NewBytesToken(b), nil
 	case parse.StringKind:
-		return NewStringToken(cp.ToString(b)), nil
+		return NewStringToken(cast.ToString(b)), nil
 	case parse.Int64Kind:
-		return NewInt64Token(cp.ToInt64(b)), nil
+		return NewInt64Token(cast.ToInt64(b)), nil
 	case parse.Float64Kind:
-		return NewFloat64Token(cp.ToFloat64(b)), nil
+		return NewFloat64Token(cast.ToFloat64(b)), nil
 	case parse.DecimalKind:
-		return NewDecimalKind(cp.ToString(b)), nil
+		return NewDecimalKind(cast.ToString(b)), nil
 	case parse.NanosecondsKind:
-		return NewNanosecondsToken(cp.ToInt64(b)), nil
+		return NewNanosecondsToken(cast.ToInt64(b)), nil
 	case parse.DateTimeKind:
-		return Token{kind: parse.DateTimeKind, s: cp.ToString(b)}, nil
+		return Token{kind: parse.DateTimeKind, s: cast.ToString(b)}, nil
 	case parse.TagKind:
-		return NewTagToken(cp.ToString(b)), nil
+		return NewTagToken(cast.ToString(b)), nil
 	}
 	panic("unreachable")
 }
