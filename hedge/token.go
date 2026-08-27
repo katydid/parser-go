@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"katydid.org.za/go/parser-go/cast"
-	"katydid.org.za/go/parser-go/cp"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -99,39 +98,40 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	if err != nil {
 		return Token{}, err
 	}
-	t := Token{kind: kind, b: cp.Bytes(b)}
+	b = bytes.Clone(b)
+	t := &Token{kind: kind, b: b}
 	switch kind {
 	case parse.UnknownKind:
-		return t, nil
+		return *t, nil
 	case parse.NullKind:
-		return t, nil
+		return *t, nil
 	case parse.FalseKind:
-		return t, nil
+		return *t, nil
 	case parse.TrueKind:
-		return t, nil
+		return *t, nil
 	case parse.BytesKind:
-		return t, nil
+		return *t, nil
 	case parse.StringKind:
 		t.s = cast.ToString(t.b)
-		return t, nil
+		return *t, nil
 	case parse.Int64Kind:
 		t.i = cast.ToInt64(t.b)
-		return t, nil
+		return *t, nil
 	case parse.Float64Kind:
 		t.f = cast.ToFloat64(t.b)
-		return t, nil
+		return *t, nil
 	case parse.DecimalKind:
 		t.s = cast.ToString(t.b)
-		return t, nil
+		return *t, nil
 	case parse.NanosecondsKind:
 		t.i = cast.ToInt64(t.b)
-		return t, nil
+		return *t, nil
 	case parse.DateTimeKind:
 		t.s = cast.ToString(t.b)
-		return t, nil
+		return *t, nil
 	case parse.TagKind:
 		t.s = cast.ToString(t.b)
-		return t, nil
+		return *t, nil
 	}
 	panic("unreachable")
 }
@@ -153,7 +153,8 @@ func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	case parse.Int64Kind:
 		return parse.Int64Kind, cast.FromInt64(t.i, alloc), nil
 	case parse.Float64Kind:
-		return parse.Float64Kind, cast.FromFloat64(t.f, alloc), nil
+		kind, val := parse.Float64Kind, cast.FromFloat64(t.f, alloc)
+		return kind, val, nil
 	case parse.DecimalKind:
 		return parse.DecimalKind, cast.FromString(t.s, alloc), nil
 	case parse.NanosecondsKind:

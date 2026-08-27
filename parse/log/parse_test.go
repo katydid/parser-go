@@ -18,18 +18,18 @@ import (
 	"testing"
 
 	"katydid.org.za/go/parser-go/expect"
-	"katydid.org.za/go/parser-go/hedge"
+	. "katydid.org.za/go/parser-go/hedge"
 	"katydid.org.za/go/parser-go/parse"
 )
 
 func TestParseFloat64(t *testing.T) {
-	n := hedge.Node{
-		Label: hedge.NewStringToken("num"),
-		Children: []hedge.Node{
-			{Label: hedge.NewFloat64Token(3.14)},
+	n := Node{
+		Label: NewStringToken("num"),
+		Children: []Node{
+			{Label: NewFloat64Token(3.14)},
 		},
 	}
-	var p parse.Parser = hedge.NewParser([]hedge.Node{n})
+	var p parse.Parser = NewParser([]Node{n})
 	p = WrapParser(p)
 	expect.Hint(t, p, parse.EnterHint)
 
@@ -46,20 +46,30 @@ func TestParseFloat64(t *testing.T) {
 }
 
 func TestParseInt64(t *testing.T) {
-	n := hedge.Node{
-		Label: hedge.NewInt64Token(1),
-		Children: []hedge.Node{
-			{Label: hedge.NewInt64Token(123)},
+	n := Node{
+		Label: NewInt64Token(1),
+		Children: []Node{
+			{
+				Label: NewInt64Token(0),
+				Children: []Node{
+					{Label: NewInt64Token(123)},
+				},
+			},
 		},
 	}
-	var p parse.Parser = hedge.NewParser([]hedge.Node{n})
+	var p parse.Parser = NewParser([]Node{n})
 	expect.Hint(t, p, parse.EnterHint)
 
 	expect.Hint(t, p, parse.FieldHint)
 	expect.Int(t, p, 1)
+	expect.Hint(t, p, parse.EnterHint)
 
+	expect.Hint(t, p, parse.FieldHint)
+	expect.Int(t, p, 0)
 	expect.Hint(t, p, parse.ValueHint)
 	expect.Int(t, p, 123)
+
+	expect.Hint(t, p, parse.LeaveHint)
 
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.EOF(t, p)
