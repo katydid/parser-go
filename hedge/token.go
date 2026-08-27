@@ -113,7 +113,7 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	case parse.TrueKind:
 		return NewTrueToken(), nil
 	case parse.BytesKind:
-		return NewBytesToken(b), nil
+		return NewBytesToken(cp.Bytes(b)), nil
 	case parse.StringKind:
 		return NewStringToken(cp.ToString(b)), nil
 	case parse.Int64Kind:
