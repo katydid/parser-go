@@ -66,11 +66,7 @@ func (t Token) Equal(u Token) bool {
 }
 
 func (t Token) String() string {
-	kind, val, err := t.Token(func(size int) []byte { return make([]byte, size) })
-	if err != nil {
-		return err.Error()
-	}
-	switch kind {
+	switch t.kind {
 	case parse.NullKind:
 		return fmt.Sprintf("%v", nil)
 	case parse.FalseKind:
@@ -78,21 +74,21 @@ func (t Token) String() string {
 	case parse.TrueKind:
 		return fmt.Sprintf("%v", true)
 	case parse.BytesKind:
-		return fmt.Sprintf("%v", val)
+		return fmt.Sprintf("%v", t.b)
 	case parse.StringKind:
-		return fmt.Sprintf("%v", cast.ToString(val))
+		return fmt.Sprintf("%v", t.s)
 	case parse.Int64Kind:
-		return fmt.Sprintf("%v", cast.ToInt64(val))
+		return fmt.Sprintf("%v", t.i)
 	case parse.Float64Kind:
-		return fmt.Sprintf("%v", cast.ToFloat64(val))
+		return fmt.Sprintf("%v", t.f)
 	case parse.DecimalKind:
-		return fmt.Sprintf("%v", cast.ToString(val))
+		return fmt.Sprintf("%v", t.s)
 	case parse.NanosecondsKind:
-		return fmt.Sprintf("%v", cast.ToInt64(val))
+		return fmt.Sprintf("%v", t.i)
 	case parse.DateTimeKind:
-		return fmt.Sprintf("%v", cast.ToString(val))
+		return fmt.Sprintf("%v", t.s)
 	case parse.TagKind:
-		return fmt.Sprintf("%v", cast.ToString(val))
+		return fmt.Sprintf("%v", t.s)
 	case parse.UnknownKind:
 		return "<unknown kind>"
 	}
@@ -103,8 +99,7 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	if err != nil {
 		return Token{}, err
 	}
-	b = cp.Bytes(b)
-	t := Token{kind: kind, b: b}
+	t := Token{kind: kind, b: cp.Bytes(b)}
 	switch kind {
 	case parse.UnknownKind:
 		return t, nil

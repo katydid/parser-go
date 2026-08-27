@@ -44,3 +44,23 @@ func TestParseFloat64(t *testing.T) {
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.EOF(t, p)
 }
+
+func TestParseInt64(t *testing.T) {
+	n := hedge.Node{
+		Label: hedge.NewInt64Token(1),
+		Children: []hedge.Node{
+			{Label: hedge.NewInt64Token(123)},
+		},
+	}
+	var p parse.Parser = hedge.NewParser([]hedge.Node{n})
+	expect.Hint(t, p, parse.EnterHint)
+
+	expect.Hint(t, p, parse.FieldHint)
+	expect.Int(t, p, 1)
+
+	expect.Hint(t, p, parse.ValueHint)
+	expect.Int(t, p, 123)
+
+	expect.Hint(t, p, parse.LeaveHint)
+	expect.EOF(t, p)
+}
