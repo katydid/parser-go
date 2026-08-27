@@ -31,22 +31,35 @@ const fieldState = state(4)
 const eofState = state(5)
 
 type parser struct {
-	current state
-	k       Token
-	v       Token
-	h       Hedge
-	stack   []Hedge
-	alloc   func(size int) []byte
+	current  state
+	k        Token
+	v        Token
+	h        Hedge
+	original Hedge
+	stack    []Hedge
+	alloc    func(size int) []byte
 }
 
-func NewParser(h Hedge) parse.Parser {
+type Parser interface {
+	parse.Parser
+	Reset()
+}
+
+func NewParser(h Hedge) Parser {
 	return &parser{
-		current: unknownState,
-		h:       h,
+		current:  unknownState,
+		h:        h,
+		original: h,
 		alloc: func(size int) []byte {
 			return make([]byte, size)
 		},
 	}
+}
+
+func (p *parser) Reset() {
+	p.current = unknownState
+	p.h = p.original
+	p.stack = p.stack[:0]
 }
 
 func (p *parser) pop() {
@@ -66,14 +79,12 @@ func (p *parser) nextNode(current Node, nexts Hedge) parse.Hint {
 		p.h = nexts
 		return parse.ValueHint
 	}
-	if len(current.Children) == 1 {
-		if len(current.Children[0].Children) == 0 {
-			p.current = pairState
-			p.k = current.Label
-			p.v = current.Children[0].Label
-			p.h = nexts
-			return parse.FieldHint
-		}
+	if len(current.Children) == 1 && len(current.Children[0].Children) == 0 {
+		p.current = pairState
+		p.k = current.Label
+		p.v = current.Children[0].Label
+		p.h = nexts
+		return parse.FieldHint
 	}
 	p.stack = append(p.stack, nexts)
 	p.current = fieldState

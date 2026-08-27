@@ -48,6 +48,10 @@ var Input = &Example{
 	F: []uint32{5},
 }
 
+func ptr[A any](a A) *A {
+	return &a
+}
+
 // Output is a sample instance of Hedge that repesents the Input variable after it has been parsed by Walk.
 var Output = Hedge{
 	Field(`A`, `1`),
@@ -77,8 +81,4 @@ var Output = Hedge{
 	Nested(`F`,
 		Field(`0`, `5`),
 	),
-}
-
-func ptr[A any](a A) *A {
-	return &a
 }

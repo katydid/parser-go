@@ -20,7 +20,7 @@ type Option func(*tagger)
 // WithTags tags
 // 1. each object with an object key, for example `{"a": null}` is parsed as `{"object": {"a": null}}`.
 // 2. each array with an array key, for example `{"a": []}` is parsed as `{"a": {"array": []}}`.
-func WithTags() func(*tagger) {
+func WithTags() Option {
 	return func(t *tagger) {
 		t.tag = true
 	}
@@ -29,7 +29,7 @@ func WithTags() func(*tagger) {
 // WithIndexes tags each array item with an index:
 // for example `["a", "b"]` is parsed as `[0: "a", 1: "b"]`.
 // Requires WithTags to also be passed as an option.
-func WithIndexes() func(*tagger) {
+func WithIndexes() Option {
 	return func(t *tagger) {
 		t.index = true
 	}
@@ -38,7 +38,7 @@ func WithIndexes() func(*tagger) {
 // WithAllocator replaces the default `func(size int) []byte { return make([]byte, size) }` allocator
 // with a different allocator function.
 // Usually an allocator that uses a pool.
-func WithAllocator(alloc func(int) []byte) func(*tagger) {
+func WithAllocator(alloc func(int) []byte) Option {
 	return func(o *tagger) {
 		o.alloc = alloc
 	}
