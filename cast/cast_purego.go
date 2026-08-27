@@ -79,6 +79,12 @@ func FromFloat64(f float64, alloc func(size int) []byte) []byte {
 	return bs
 }
 
+func FromFloat64BitsPtr(u *uint64, _alloc func(size int) []byte) []byte {
+	bs := alloc(8)
+	binary.LittleEndian.PutUint64(bs, *u)
+	return bs
+}
+
 func ToFloat32(bs []byte) float32 {
 	u := binary.LittleEndian.Uint32(bs)
 	return math.Float32frombits(u)

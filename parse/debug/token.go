@@ -15,6 +15,8 @@
 package debug
 
 import (
+	"math"
+
 	"katydid.org.za/go/parser-go/cast"
 	"katydid.org.za/go/parser-go/parse"
 )
@@ -25,16 +27,16 @@ func alloc(size int) []byte {
 }
 
 type doubleToken struct {
-	v float64
+	v uint64
 }
 
 // NewDoubleToken wraps a native go type into a parse.Token.
 func NewDoubleToken(v float64) parse.Token {
-	return &doubleToken{v}
+	return &doubleToken{math.Float64bits(v)}
 }
 
 func (v *doubleToken) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromFloat64(v.v, alloc), nil
+	return parse.Float64Kind, cast.FromFloat64BitsPtr(&v.v, alloc), nil
 }
 
 type intToken struct {

@@ -98,6 +98,14 @@ func FromFloat64(f float64, _alloc func(size int) []byte) []byte {
 	}))
 }
 
+func FromFloat64BitsPtr(u *uint64, _alloc func(size int) []byte) []byte {
+	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Len:  8,
+		Cap:  8,
+		Data: uintptr(unsafe.Pointer(u)),
+	}))
+}
+
 func ToFloat32(bs []byte) float32 {
 	u := *(*uint32)(unsafe.Pointer(&bs[0]))
 	return math.Float32frombits(u)

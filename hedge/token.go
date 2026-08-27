@@ -17,6 +17,7 @@ package hedge
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"time"
 
 	"katydid.org.za/go/parser-go/cast"
@@ -28,7 +29,7 @@ type Token struct {
 	i    int64
 	b    []byte
 	s    string
-	f    float64
+	u    uint64
 }
 
 func (t Token) Equal(u Token) bool {
@@ -49,7 +50,7 @@ func (t Token) Equal(u Token) bool {
 	case parse.Int64Kind:
 		return t.i == u.i
 	case parse.Float64Kind:
-		return t.f == u.f
+		return t.u == u.u
 	case parse.DecimalKind:
 		return t.s == u.s
 	case parse.NanosecondsKind:
@@ -79,7 +80,7 @@ func (t Token) String() string {
 	case parse.Int64Kind:
 		return fmt.Sprintf("%v", t.i)
 	case parse.Float64Kind:
-		return fmt.Sprintf("%v", t.f)
+		return fmt.Sprintf("%v", math.Float64frombits(t.u))
 	case parse.DecimalKind:
 		return fmt.Sprintf("%v", t.s)
 	case parse.NanosecondsKind:
@@ -117,7 +118,7 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 		t.i = cast.ToInt64(t.b)
 		return *t, nil
 	case parse.Float64Kind:
-		t.f = cast.ToFloat64(t.b)
+		t.u = math.Float64bits(cast.ToFloat64(t.b))
 		return *t, nil
 	case parse.DecimalKind:
 		t.s = cast.ToString(t.b)
@@ -152,7 +153,7 @@ func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	case parse.Int64Kind:
 		return parse.Int64Kind, cast.FromInt64Ptr(&t.i, alloc), nil
 	case parse.Float64Kind:
-		kind, val := parse.Float64Kind, cast.FromFloat64(t.f, alloc)
+		kind, val := parse.Float64Kind, cast.FromFloat64BitsPtr(&t.u, alloc)
 		return kind, val, nil
 	case parse.DecimalKind:
 		return parse.DecimalKind, cast.FromString(t.s, alloc), nil
@@ -214,7 +215,7 @@ func NewInt64Token(i int64) Token {
 func NewFloat64Token(f float64) Token {
 	return Token{
 		kind: parse.Float64Kind,
-		f:    f,
+		u:    math.Float64bits(f),
 	}
 }
 

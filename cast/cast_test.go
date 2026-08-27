@@ -159,6 +159,17 @@ func TestCastFloat64(t *testing.T) {
 	}
 }
 
+func TestCastFloat64BitsPtr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := float64(123)
+	u := math.Float64bits(want)
+	bs := FromFloat64BitsPtr(&u, alloc)
+	got := ToFloat64(bs)
+	if got != want {
+		t.Fatalf("want %f got %f", want, got)
+	}
+}
+
 func TestCastMaxFloat64(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float64(math.MaxFloat64)
@@ -169,10 +180,32 @@ func TestCastMaxFloat64(t *testing.T) {
 	}
 }
 
+func TestCastMaxFloat64BitsPtr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := float64(math.MaxFloat64)
+	u := math.Float64bits(want)
+	bs := FromFloat64BitsPtr(&u, alloc)
+	got := ToFloat64(bs)
+	if got != want {
+		t.Fatalf("want %f got %f", want, got)
+	}
+}
+
 func TestCastSmallestNonzeroFloat64(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float64(math.SmallestNonzeroFloat64)
 	bs := FromFloat64(want, alloc)
+	got := ToFloat64(bs)
+	if got != want {
+		t.Fatalf("want %f got %f", want, got)
+	}
+}
+
+func TestCastSmallestNonzeroFloat64BitsPtr(t *testing.T) {
+	alloc := func(size int) []byte { return make([]byte, size) }
+	want := float64(math.SmallestNonzeroFloat64)
+	u := math.Float64bits(want)
+	bs := FromFloat64BitsPtr(&u, alloc)
 	got := ToFloat64(bs)
 	if got != want {
 		t.Fatalf("want %f got %f", want, got)
