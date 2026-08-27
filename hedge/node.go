@@ -57,7 +57,7 @@ func (n Node) VerboseEqual(m Node) error {
 	}
 	for i := range n.Children {
 		if err := n.Children[i].VerboseEqual(m.Children[i]); err != nil {
-			return fmt.Errorf("%d.%v", i, err)
+			return fmt.Errorf("%v.%v", n.Label, err)
 		}
 	}
 	return nil
