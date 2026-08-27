@@ -104,31 +104,39 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 		return Token{}, err
 	}
 	b = cp.Bytes(b)
+	t := Token{kind: kind, b: b}
 	switch kind {
 	case parse.UnknownKind:
-		return NewUknownToken(), nil
+		return t, nil
 	case parse.NullKind:
-		return NewNullToken(), nil
+		return t, nil
 	case parse.FalseKind:
-		return NewFalseToken(), nil
+		return t, nil
 	case parse.TrueKind:
-		return NewTrueToken(), nil
+		return t, nil
 	case parse.BytesKind:
-		return NewBytesToken(cp.Bytes(b)), nil
+		return t, nil
 	case parse.StringKind:
-		return NewStringToken(cp.ToString(b)), nil
+		t.s = cast.ToString(t.b)
+		return t, nil
 	case parse.Int64Kind:
-		return NewInt64Token(cp.ToInt64(b)), nil
+		t.i = cast.ToInt64(t.b)
+		return t, nil
 	case parse.Float64Kind:
-		return NewFloat64Token(cp.ToFloat64(b)), nil
+		t.f = cast.ToFloat64(t.b)
+		return t, nil
 	case parse.DecimalKind:
-		return NewDecimalKind(cp.ToString(b)), nil
+		t.s = cast.ToString(t.b)
+		return t, nil
 	case parse.NanosecondsKind:
-		return NewNanosecondsToken(cp.ToInt64(b)), nil
+		t.i = cast.ToInt64(t.b)
+		return t, nil
 	case parse.DateTimeKind:
-		return Token{kind: parse.DateTimeKind, s: cp.ToString(b)}, nil
+		t.s = cast.ToString(t.b)
+		return t, nil
 	case parse.TagKind:
-		return NewTagToken(cp.ToString(b)), nil
+		t.s = cast.ToString(t.b)
+		return t, nil
 	}
 	panic("unreachable")
 }
