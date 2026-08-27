@@ -14,7 +14,10 @@
 
 package hedge
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // Node is a type that represents a node in a tree.
 // It has a label an children nodes.
@@ -43,6 +46,21 @@ func (n Node) Equal(m Node) bool {
 		return false
 	}
 	return true
+}
+
+func (n Node) VerboseEqual(m Node) error {
+	if !n.Label.Equal(m.Label) {
+		return fmt.Errorf("%v != %v", n.Label, m.Label)
+	}
+	if len(n.Children) != len(m.Children) {
+		return fmt.Errorf("%v: has different number of children", n.Label)
+	}
+	for i := range n.Children {
+		if err := n.Children[i].VerboseEqual(m.Children[i]); err != nil {
+			return fmt.Errorf("%d.%v", i, err)
+		}
+	}
+	return nil
 }
 
 // String returns a string representation of Nodes.
