@@ -41,9 +41,9 @@ func ParseInto(p parse.Parser) (Hedge, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			kind, val, err := p.Token()
-			val = bytes.Clone(val)
-			name, err := NewToken(kind, val, err)
+			namekind, nameval, err := p.Token()
+			nameval = bytes.Clone(nameval)
+			name, err := NewToken(namekind, nameval, err)
 			if err != nil {
 				return nil, err
 			}
@@ -108,9 +108,9 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 			}
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
-			kind, val, err := p.Token()
-			val = bytes.Clone(val)
-			name, err := NewToken(kind, val, err)
+			namekind, nameval, err := p.Token()
+			nameval = bytes.Clone(nameval)
+			name, err := NewToken(namekind, nameval, err)
 			if err != nil {
 				return nil, err
 			}
