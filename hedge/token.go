@@ -167,7 +167,7 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	panic("unreachable")
 }
 
-func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
+func (t *Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	switch t.kind {
 	case parse.UnknownKind:
 		return parse.UnknownKind, nil, nil
@@ -180,20 +180,19 @@ func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	case parse.BytesKind:
 		return parse.BytesKind, t.b, nil
 	case parse.StringKind:
-		return parse.StringKind, cast.FromStringPtr(&t.s, alloc), nil
+		return parse.StringKind, t.b, nil
 	case parse.Int64Kind:
-		return parse.Int64Kind, cast.FromInt64Ptr(&t.i, alloc), nil
+		return parse.Int64Kind, t.b, nil
 	case parse.Float64Kind:
-		kind, val := parse.Float64Kind, cast.FromFloat64BitsPtr(&t.u, alloc)
-		return kind, val, nil
+		return parse.Float64Kind, t.b, nil
 	case parse.DecimalKind:
-		return parse.DecimalKind, cast.FromStringPtr(&t.s, alloc), nil
+		return parse.DecimalKind, t.b, nil
 	case parse.NanosecondsKind:
-		return parse.NanosecondsKind, cast.FromInt64Ptr(&t.i, alloc), nil
+		return parse.NanosecondsKind, t.b, nil
 	case parse.DateTimeKind:
-		return parse.DateTimeKind, cast.FromStringPtr(&t.s, alloc), nil
+		return parse.DateTimeKind, t.b, nil
 	case parse.TagKind:
-		return parse.TagKind, cast.FromStringPtr(&t.s, alloc), nil
+		return parse.TagKind, t.b, nil
 	}
 	panic("unreachable")
 }
@@ -225,7 +224,7 @@ func NewTrueToken() Token {
 func NewBytesToken(b []byte) Token {
 	return Token{
 		kind: parse.BytesKind,
-		b:    b,
+		b:    bytes.Clone(b),
 	}
 }
 
@@ -234,7 +233,7 @@ func NewStringToken(s string) Token {
 		kind: parse.StringKind,
 		s:    s,
 	}
-	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	t.b = []byte(t.s)
 	return *t
 }
 
@@ -243,7 +242,8 @@ func NewInt64Token(i int64) Token {
 		kind: parse.Int64Kind,
 		i:    i,
 	}
-	t.b = cast.FromInt64Ptr(&t.i, func(size int) []byte { return make([]byte, size) })
+	t.b = make([]byte, 8)
+	binary.LittleEndian.PutUint64(t.b, uint64(t.i))
 	return *t
 }
 
@@ -252,7 +252,8 @@ func NewFloat64Token(f float64) Token {
 		kind: parse.Float64Kind,
 		u:    math.Float64bits(f),
 	}
-	t.b = cast.FromFloat64BitsPtr(&t.u, func(size int) []byte { return make([]byte, size) })
+	t.b = make([]byte, 8)
+	binary.LittleEndian.PutUint64(t.b, t.u)
 	return *t
 }
 
@@ -261,7 +262,7 @@ func NewDecimalKind(d string) Token {
 		kind: parse.DecimalKind,
 		s:    d,
 	}
-	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	t.b = []byte(t.s)
 	return *t
 }
 
@@ -270,7 +271,8 @@ func NewNanosecondsToken(n int64) Token {
 		kind: parse.NanosecondsKind,
 		i:    n,
 	}
-	t.b = cast.FromInt64Ptr(&t.i, func(size int) []byte { return make([]byte, size) })
+	t.b = make([]byte, 8)
+	binary.LittleEndian.PutUint64(t.b, uint64(t.i))
 	return *t
 }
 
@@ -279,7 +281,7 @@ func NewDateTimeToken(v time.Time) Token {
 		kind: parse.DateTimeKind,
 		s:    v.Format(time.RFC3339Nano),
 	}
-	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	t.b = []byte(t.s)
 	return *t
 }
 
@@ -288,6 +290,6 @@ func NewTagToken(v string) Token {
 		kind: parse.TagKind,
 		s:    v,
 	}
-	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	t.b = []byte(t.s)
 	return *t
 }
