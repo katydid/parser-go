@@ -51,7 +51,7 @@ func FromUint64Ptr(i *uint64, alloc func(size int) []byte) []byte {
 }
 
 func ToUint32Ptr(bs []byte, v *uint32) {
-	binary.LittleEndian.Uint32(bs)
+	*v = binary.LittleEndian.Uint32(bs)
 }
 
 func FromUint32Ptr(i *uint32, alloc func(size int) []byte) []byte {
