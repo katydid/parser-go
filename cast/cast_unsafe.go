@@ -26,6 +26,10 @@ func ToInt64(bs []byte) int64 {
 	return *(*int64)(unsafe.Pointer(&bs[0]))
 }
 
+func ToInt64Ptr(bs []byte, v *int64) {
+	*v = *(*int64)(unsafe.Pointer(&bs[0]))
+}
+
 // FromInt64 is very unsafe, you have make sure to keep the int64 in a value that won't be freed, until you are doing using this slice.
 func FromInt64(i int64, _alloc func(size int) []byte) []byte {
 	return *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
@@ -86,6 +90,10 @@ func FromUint32(i uint32, _alloc func(size int) []byte) []byte {
 func ToFloat64(bs []byte) float64 {
 	u := *(*uint64)(unsafe.Pointer(&bs[0]))
 	return math.Float64frombits(u)
+}
+
+func ToFloat64BitsPtr(bs []byte, v *uint64) {
+	*v = *(*uint64)(unsafe.Pointer(&bs[0]))
 }
 
 // FromFloat64 is very unsafe, you have make sure to keep the float64 in a value that won't be freed, until you are doing using this slice.

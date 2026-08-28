@@ -115,10 +115,10 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 		t.s = cast.ToString(t.b)
 		return *t, nil
 	case parse.Int64Kind:
-		t.i = cast.ToInt64(t.b)
+		cast.ToInt64Ptr(t.b, &t.i)
 		return *t, nil
 	case parse.Float64Kind:
-		t.u = math.Float64bits(cast.ToFloat64(t.b))
+		cast.ToFloat64BitsPtr(t.b, &t.u)
 		return *t, nil
 	case parse.DecimalKind:
 		t.s = cast.ToString(t.b)

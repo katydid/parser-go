@@ -25,6 +25,10 @@ func ToInt64(bs []byte) int64 {
 	return int64(binary.LittleEndian.Uint64(bs))
 }
 
+func ToInt64Ptr(bs []byte, v *int64) {
+	*v = int64(binary.LittleEndian.Uint64(bs))
+}
+
 func FromInt64(i int64, alloc func(size int) []byte) []byte {
 	bs := alloc(8)
 	binary.LittleEndian.PutUint64(bs, uint64(i))
@@ -70,6 +74,10 @@ func FromUint32(i uint32, alloc func(size int) []byte) []byte {
 func ToFloat64(bs []byte) float64 {
 	u := binary.LittleEndian.Uint64(bs)
 	return math.Float64frombits(u)
+}
+
+func ToFloat64BitsPtr(bs []byte, v *uint64) {
+	*v = binary.LittleEndian.Uint64(bs)
 }
 
 func FromFloat64(f float64, alloc func(size int) []byte) []byte {

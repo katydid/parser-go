@@ -45,7 +45,8 @@ func TestAllocCastInt64Ptr(t *testing.T) {
 	f := func() {
 		want := int64(1233456578)
 		bs := FromInt64Ptr(&want, alloc)
-		got := ToInt64(bs)
+		var got int64
+		ToInt64Ptr(bs, &got)
 		if got != want {
 			t.Fatalf("want %d got %d", want, got)
 		}
@@ -140,7 +141,9 @@ func TestAllocCastFloat64BitsPtr(t *testing.T) {
 		want := float64(1233456578)
 		u := math.Float64bits(want)
 		bs := FromFloat64BitsPtr(&u, alloc)
-		got := ToFloat64(bs)
+		var gotu uint64
+		ToFloat64BitsPtr(bs, &gotu)
+		got := math.Float64frombits(gotu)
 		if got != want {
 			t.Fatalf("want %f got %f", want, got)
 		}

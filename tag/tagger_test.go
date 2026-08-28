@@ -77,6 +77,16 @@ func TestTaggerWithTagsAndIndexes(t *testing.T) {
 	expect.Hint(t, p, parse.ValueHint)
 	expect.Int(t, p, 1)
 
+	expect.Hint(t, p, parse.FieldHint)
+	expect.String(t, p, "F")
+	expect.Hint(t, p, parse.ValueHint)
+	expect.Float(t, p, 1.1)
+
+	expect.Hint(t, p, parse.FieldHint)
+	expect.String(t, p, "G")
+	expect.Hint(t, p, parse.ValueHint)
+	expect.Float(t, p, 3.14)
+
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.Hint(t, p, parse.LeaveHint)
 
@@ -124,10 +134,33 @@ func TestTaggerWithIndexes(t *testing.T) {
 	expect.Hint(t, p, parse.ValueHint)
 	expect.Int(t, p, 1)
 
+	expect.Hint(t, p, parse.FieldHint)
+	expect.String(t, p, "F")
+	expect.Hint(t, p, parse.ValueHint)
+	expect.Float(t, p, 1.1)
+
+	expect.Hint(t, p, parse.FieldHint)
+	expect.String(t, p, "G")
+	expect.Hint(t, p, parse.ValueHint)
+	expect.Float(t, p, 3.14)
+
 	expect.Hint(t, p, parse.LeaveHint)
 
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.EOF(t, p)
+}
+
+func TestTaggerParseInto(t *testing.T) {
+	j := NewJSONSchemaAbleParser(JSONSchemaAbleHedge)
+	p := tag.NewTagger(j, tag.WithIndexes())
+	got, err := ParseInto(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := OutputIndexes
+	if err := want.VerboseEqual(got); err != nil {
+		t.Fatalf("want %v got %v: %v", want, got, err)
+	}
 }
 
 var JSONSchemaAbleHedge = Hedge{
@@ -139,6 +172,22 @@ var JSONSchemaAbleHedge = Hedge{
 	Node{Label: NewStringToken("objectC"), Children: Hedge{
 		Node{Label: NewStringToken("D"), Children: Hedge{Node{Label: NewInt64Token(0)}}},
 		Node{Label: NewStringToken("E"), Children: Hedge{Node{Label: NewInt64Token(1)}}},
+		Node{Label: NewStringToken("F"), Children: Hedge{Node{Label: NewFloat64Token(1.1)}}},
+		Node{Label: NewStringToken("G"), Children: Hedge{Node{Label: NewFloat64Token(3.14)}}},
+	}},
+}
+
+var OutputIndexes = Hedge{
+	Node{Label: NewStringToken("A"), Children: Hedge{Node{Label: NewInt64Token(1)}}},
+	Node{Label: NewStringToken("arrayB"), Children: Hedge{
+		Node{Label: NewInt64Token(0), Children: Hedge{Node{Label: NewStringToken("b2")}}},
+		Node{Label: NewInt64Token(1), Children: Hedge{Node{Label: NewStringToken("b3")}}},
+	}},
+	Node{Label: NewStringToken("objectC"), Children: Hedge{
+		Node{Label: NewStringToken("D"), Children: Hedge{Node{Label: NewInt64Token(0)}}},
+		Node{Label: NewStringToken("E"), Children: Hedge{Node{Label: NewInt64Token(1)}}},
+		Node{Label: NewStringToken("F"), Children: Hedge{Node{Label: NewFloat64Token(1.1)}}},
+		Node{Label: NewStringToken("G"), Children: Hedge{Node{Label: NewFloat64Token(3.14)}}},
 	}},
 }
 
