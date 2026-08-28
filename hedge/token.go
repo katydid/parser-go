@@ -97,7 +97,7 @@ func (t Token) String() string {
 
 func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	if err != nil {
-		return Token{}, err
+		return NewUknownToken(), err
 	}
 	t := &Token{kind: kind, b: b}
 	switch kind {
@@ -199,50 +199,64 @@ func NewBytesToken(b []byte) Token {
 }
 
 func NewStringToken(s string) Token {
-	return Token{
+	t := &Token{
 		kind: parse.StringKind,
 		s:    s,
 	}
+	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
 func NewInt64Token(i int64) Token {
-	return Token{
+	t := &Token{
 		kind: parse.Int64Kind,
 		i:    i,
 	}
+	t.b = cast.FromInt64Ptr(&t.i, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
 func NewFloat64Token(f float64) Token {
-	return Token{
+	t := &Token{
 		kind: parse.Float64Kind,
 		u:    math.Float64bits(f),
 	}
+	t.b = cast.FromFloat64BitsPtr(&t.u, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
 func NewDecimalKind(d string) Token {
-	return Token{
+	t := &Token{
 		kind: parse.DecimalKind,
 		s:    d,
 	}
+	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
 func NewNanosecondsToken(n int64) Token {
-	return Token{
+	t := &Token{
 		kind: parse.NanosecondsKind,
 		i:    n,
 	}
+	t.b = cast.FromInt64Ptr(&t.i, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
-func NewDateTimeToken(t time.Time) Token {
-	return Token{
+func NewDateTimeToken(v time.Time) Token {
+	t := &Token{
 		kind: parse.DateTimeKind,
-		s:    t.Format(time.RFC3339Nano),
+		s:    v.Format(time.RFC3339Nano),
 	}
+	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
 
-func NewTagToken(t string) Token {
-	return Token{
+func NewTagToken(v string) Token {
+	t := &Token{
 		kind: parse.TagKind,
-		s:    t,
+		s:    v,
 	}
+	t.b = cast.FromStringPtr(&t.s, func(size int) []byte { return make([]byte, size) })
+	return *t
 }
