@@ -51,7 +51,7 @@ func FromUint64Ptr(i *uint64, alloc func(size int) []byte) []byte {
 }
 
 func ToUint32Ptr(bs []byte, v *uint32) {
-	return binary.LittleEndian.Uint32(bs)
+	binary.LittleEndian.Uint32(bs)
 }
 
 func FromUint32Ptr(i *uint32, alloc func(size int) []byte) []byte {
@@ -64,7 +64,7 @@ func ToFloat64BitsPtr(bs []byte, v *uint64) {
 	*v = binary.LittleEndian.Uint64(bs)
 }
 
-func FromFloat64BitsPtr(u *uint64, _alloc func(size int) []byte) []byte {
+func FromFloat64BitsPtr(u *uint64, alloc func(size int) []byte) []byte {
 	bs := alloc(8)
 	binary.LittleEndian.PutUint64(bs, *u)
 	return bs
@@ -74,7 +74,7 @@ func ToFloat32BitsPtr(bs []byte, v *uint32) {
 	*v = binary.LittleEndian.Uint32(bs)
 }
 
-func FromFloat32BitsPtr(f *uint32, alloc func(size int) []byte) []byte {
+func FromFloat32BitsPtr(u *uint32, alloc func(size int) []byte) []byte {
 	bs := alloc(4)
 	binary.LittleEndian.PutUint32(bs, *u)
 	return bs
@@ -86,6 +86,6 @@ func ToStringPtr(buf []byte, v *string) {
 
 func FromStringPtr(s *string, alloc func(size int) []byte) []byte {
 	bs := alloc(len(*s))
-	copy(bs, s)
+	copy(bs, *s)
 	return bs
 }
