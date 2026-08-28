@@ -17,6 +17,7 @@ package expect
 import (
 	"fmt"
 	"io"
+	"math"
 	"testing"
 
 	"katydid.org.za/go/parser-go/cast"
@@ -65,7 +66,8 @@ func Int(t *testing.T, tzer parse.Parser, want int64) {
 	if tokenKind != parse.Int64Kind {
 		t.Fatalf("expected int64, but got %v", tokenKind)
 	}
-	got := cast.ToInt64(gotb)
+	var got int64
+	cast.ToInt64Ptr(gotb, &got)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
 	}
@@ -80,7 +82,9 @@ func Float(t *testing.T, tzer parse.Parser, want float64) {
 	if tokenKind != parse.Float64Kind {
 		t.Fatalf("expected float64, but got %v", tokenKind)
 	}
-	got := cast.ToFloat64(gotb)
+	var gotu uint64
+	cast.ToFloat64BitsPtr(gotb, &gotu)
+	got := math.Float64frombits(gotu)
 	if got != want {
 		t.Fatalf("want %v, but got %v", want, got)
 	}

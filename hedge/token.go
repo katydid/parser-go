@@ -112,7 +112,7 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	case parse.BytesKind:
 		return *t, nil
 	case parse.StringKind:
-		t.s = cast.ToString(t.b)
+		cast.ToStringPtr(t.b, &t.s)
 		return *t, nil
 	case parse.Int64Kind:
 		cast.ToInt64Ptr(t.b, &t.i)
@@ -121,16 +121,16 @@ func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 		cast.ToFloat64BitsPtr(t.b, &t.u)
 		return *t, nil
 	case parse.DecimalKind:
-		t.s = cast.ToString(t.b)
+		cast.ToStringPtr(t.b, &t.s)
 		return *t, nil
 	case parse.NanosecondsKind:
-		t.i = cast.ToInt64(t.b)
+		cast.ToInt64Ptr(t.b, &t.i)
 		return *t, nil
 	case parse.DateTimeKind:
-		t.s = cast.ToString(t.b)
+		cast.ToStringPtr(t.b, &t.s)
 		return *t, nil
 	case parse.TagKind:
-		t.s = cast.ToString(t.b)
+		cast.ToStringPtr(t.b, &t.s)
 		return *t, nil
 	}
 	panic("unreachable")
@@ -149,20 +149,20 @@ func (t Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	case parse.BytesKind:
 		return parse.BytesKind, t.b, nil
 	case parse.StringKind:
-		return parse.StringKind, cast.FromString(t.s, alloc), nil
+		return parse.StringKind, cast.FromStringPtr(&t.s, alloc), nil
 	case parse.Int64Kind:
 		return parse.Int64Kind, cast.FromInt64Ptr(&t.i, alloc), nil
 	case parse.Float64Kind:
 		kind, val := parse.Float64Kind, cast.FromFloat64BitsPtr(&t.u, alloc)
 		return kind, val, nil
 	case parse.DecimalKind:
-		return parse.DecimalKind, cast.FromString(t.s, alloc), nil
+		return parse.DecimalKind, cast.FromStringPtr(&t.s, alloc), nil
 	case parse.NanosecondsKind:
 		return parse.NanosecondsKind, cast.FromInt64Ptr(&t.i, alloc), nil
 	case parse.DateTimeKind:
-		return parse.DateTimeKind, cast.FromString(t.s, alloc), nil
+		return parse.DateTimeKind, cast.FromStringPtr(&t.s, alloc), nil
 	case parse.TagKind:
-		return parse.TagKind, cast.FromString(t.s, alloc), nil
+		return parse.TagKind, cast.FromStringPtr(&t.s, alloc), nil
 	}
 	panic("unreachable")
 }

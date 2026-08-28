@@ -15,7 +15,6 @@
 package hedge
 
 import (
-	"bytes"
 	"io"
 
 	"katydid.org.za/go/parser-go/parse"
@@ -106,7 +105,6 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 			nodes = append(nodes, children...)
 		case parse.FieldHint:
 			namekind, nameval, err := p.Token()
-			nameval = bytes.Clone(nameval)
 			name, err := NewToken(namekind, nameval, err)
 			if err != nil {
 				return nil, err
@@ -121,7 +119,6 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 				switch childHint {
 				case parse.ValueHint:
 					kind, val, err := p.Token()
-					val = bytes.Clone(val)
 					value, err := NewToken(kind, val, err)
 					if err != nil {
 						return nil, err
@@ -137,7 +134,6 @@ func RandomParseInto(p parse.Parser, r Rand, next, skip int) (Hedge, error) {
 			}
 		case parse.ValueHint:
 			kind, val, err := p.Token()
-			val = bytes.Clone(val)
 			value, err := NewToken(kind, val, err)
 			if err != nil {
 				return nil, err

@@ -17,6 +17,7 @@ package downgrade
 
 import (
 	"io"
+	"math"
 
 	"katydid.org.za/go/parser-go/cast"
 	"katydid.org.za/go/parser-go/parse"
@@ -39,6 +40,10 @@ type downgradeParser struct {
 	state   state
 	stack   []state
 	parser  parserWithInit
+
+	i int64
+	u uint64
+	s string
 }
 
 // Parser downgrades a new parse.Parser implementation to an old parser.Interface implementation with an Init method.
@@ -353,7 +358,8 @@ func (p *downgradeParser) Int() (int64, error) {
 	if tokenKind != parse.Int64Kind {
 		return 0, errNotInt
 	}
-	return cast.ToInt64(bs), nil
+	cast.ToInt64Ptr(bs, &p.i)
+	return p.i, nil
 }
 
 func (p *downgradeParser) Uint() (uint64, error) {
@@ -375,7 +381,8 @@ func (p *downgradeParser) Double() (float64, error) {
 	if tokenKind != parse.Float64Kind {
 		return 0, errNotFloat
 	}
-	return cast.ToFloat64(bs), nil
+	cast.ToFloat64BitsPtr(bs, &p.u)
+	return math.Float64frombits(p.u), nil
 }
 
 func (p *downgradeParser) String() (string, error) {
@@ -386,7 +393,8 @@ func (p *downgradeParser) String() (string, error) {
 	if tokenKind != parse.StringKind && tokenKind != parse.DecimalKind {
 		return "", errNotString
 	}
-	return cast.ToString(bs), nil
+	cast.ToStringPtr(bs, &p.s)
+	return p.s, nil
 }
 
 var nullBytes = []byte{'n', 'u', 'l', 'l'}

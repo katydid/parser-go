@@ -62,7 +62,7 @@ func NewUintToken(v uint64) parse.Token {
 }
 
 func (v *uintToken) Token() (parse.Kind, []byte, error) {
-	return parse.Float64Kind, cast.FromUint64(v.v, alloc), nil
+	return parse.Float64Kind, cast.FromUint64Ptr(&v.v, alloc), nil
 }
 
 type boolToken struct {
@@ -91,7 +91,7 @@ func NewStringToken(v string) parse.Token {
 }
 
 func (v *stringToken) Token() (parse.Kind, []byte, error) {
-	return parse.StringKind, cast.FromString(v.v, alloc), nil
+	return parse.StringKind, cast.FromStringPtr(&v.v, alloc), nil
 }
 
 type bytesToken struct {

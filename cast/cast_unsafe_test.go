@@ -21,25 +21,6 @@ import (
 	"testing"
 )
 
-// The deprecated unsafe version of FromInt64 never allocates.
-func TestAllocCastInt64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	f := func() {
-		want := int64(1233456578)
-		bs := FromInt64(want, alloc)
-		got := ToInt64(bs)
-		if got != want {
-			t.Fatalf("want %d got %d", want, got)
-		}
-	}
-	for i := 0; i < 10000; i++ {
-		allocs := testing.AllocsPerRun(1, f)
-		if allocs > 0 {
-			t.Fatalf("Cast Allocs = %f", allocs)
-		}
-	}
-}
-
 func TestAllocCastInt64Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	f := func() {
@@ -59,13 +40,13 @@ func TestAllocCastInt64Ptr(t *testing.T) {
 	}
 }
 
-// The deprecated unsafe version of FromInt32 never allocates.
-func TestAllocCastInt32(t *testing.T) {
+func TestAllocCastInt32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	f := func() {
 		want := int32(1233456578)
-		bs := FromInt32(want, alloc)
-		got := ToInt32(bs)
+		bs := FromInt32Ptr(&want, alloc)
+		var got int32
+		ToInt32Ptr(bs, &got)
 		if got != want {
 			t.Fatalf("want %d got %d", want, got)
 		}
@@ -78,13 +59,13 @@ func TestAllocCastInt32(t *testing.T) {
 	}
 }
 
-// The deprecated unsafe version of FromUint64 never allocates.
 func TestAllocCastUint64(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	f := func() {
 		want := uint64(1233456578)
-		bs := FromUint64(want, alloc)
-		got := ToUint64(bs)
+		bs := FromUint64Ptr(&want, alloc)
+		var got uint64
+		ToUint64Ptr(bs, &got)
 		if got != want {
 			t.Fatalf("want %d got %d", want, got)
 		}
@@ -102,29 +83,11 @@ func TestAllocCastUint32(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	f := func() {
 		want := uint32(1233456578)
-		bs := FromUint32(want, alloc)
-		got := ToUint32(bs)
+		bs := FromUint32Ptr(&want, alloc)
+		var got uint32
+		ToUint32Ptr(bs, &got)
 		if got != want {
 			t.Fatalf("want %d got %d", want, got)
-		}
-	}
-	for i := 0; i < 10000; i++ {
-		allocs := testing.AllocsPerRun(1, f)
-		if allocs > 0 {
-			t.Fatalf("Cast Allocs = %f", allocs)
-		}
-	}
-}
-
-// The deprecated unsafe version of FromFloat64 never allocates.
-func TestAllocCastFloat64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	f := func() {
-		want := float64(1233456578)
-		bs := FromFloat64(want, alloc)
-		got := ToFloat64(bs)
-		if got != want {
-			t.Fatalf("want %f got %f", want, got)
 		}
 	}
 	for i := 0; i < 10000; i++ {
@@ -156,13 +119,15 @@ func TestAllocCastFloat64BitsPtr(t *testing.T) {
 	}
 }
 
-// The deprecated unsafe version of FromFloat32 never allocates.
-func TestAllocCastFloat32(t *testing.T) {
+func TestAllocCastFloat32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	f := func() {
 		want := float32(1233456578)
-		bs := FromFloat32(want, alloc)
-		got := ToFloat32(bs)
+		u := math.Float32bits(want)
+		bs := FromFloat32BitsPtr(&u, alloc)
+		var gotu uint32
+		ToFloat32BitsPtr(bs, &gotu)
+		got := math.Float32frombits(gotu)
 		if got != want {
 			t.Fatalf("want %f got %f", want, got)
 		}

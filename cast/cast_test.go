@@ -19,32 +19,12 @@ import (
 	"testing"
 )
 
-func TestCastInt64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := int64(123)
-	bs := FromInt64(want, alloc)
-	got := ToInt64(bs)
-	if got != want {
-		t.Fatalf("want %d got %d", want, got)
-	}
-}
-
 func TestCastInt64Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int64(123)
 	bs := FromInt64Ptr(&want, alloc)
 	var got int64
 	ToInt64Ptr(bs, &got)
-	if got != want {
-		t.Fatalf("want %d got %d", want, got)
-	}
-}
-
-func TestCastMaxInt64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := int64(math.MaxInt64)
-	bs := FromInt64(want, alloc)
-	got := ToInt64(bs)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
@@ -61,16 +41,6 @@ func TestCastMaxInt64Ptr(t *testing.T) {
 	}
 }
 
-func TestCastMinInt64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := int64(math.MinInt64)
-	bs := FromInt64(want, alloc)
-	got := ToInt64(bs)
-	if got != want {
-		t.Fatalf("want %d got %d", want, got)
-	}
-}
-
 func TestCastMinInt64Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int64(math.MinInt64)
@@ -82,83 +52,80 @@ func TestCastMinInt64Ptr(t *testing.T) {
 	}
 }
 
-func TestCastInt32(t *testing.T) {
+func TestCastInt32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int32(123)
-	bs := FromInt32(want, alloc)
-	got := ToInt32(bs)
+	bs := FromInt32Ptr(&want, alloc)
+	var got int32
+	ToInt32Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastMaxInt32(t *testing.T) {
+func TestCastMaxInt32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int32(math.MaxInt32)
-	bs := FromInt32(want, alloc)
-	got := ToInt32(bs)
+	bs := FromInt32Ptr(&want, alloc)
+	var got int32
+	ToInt32Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastMinInt32(t *testing.T) {
+func TestCastMinInt32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := int32(math.MinInt32)
-	bs := FromInt32(want, alloc)
-	got := ToInt32(bs)
+	bs := FromInt32Ptr(&want, alloc)
+	var got int32
+	ToInt32Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastUint64(t *testing.T) {
+func TestCastUint64Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := uint64(123)
-	bs := FromUint64(want, alloc)
-	got := ToUint64(bs)
+	bs := FromUint64Ptr(&want, alloc)
+	var got uint64
+	ToUint64Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastMaxUint64(t *testing.T) {
+func TestCastMaxUint64Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := uint64(math.MaxUint64)
-	bs := FromUint64(want, alloc)
-	got := ToUint64(bs)
+	bs := FromUint64Ptr(&want, alloc)
+	var got uint64
+	ToUint64Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastUint32(t *testing.T) {
+func TestCastUint32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := uint32(123)
-	bs := FromUint32(want, alloc)
-	got := ToUint32(bs)
+	bs := FromUint32Ptr(&want, alloc)
+	var got uint32
+	ToUint32Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
 	}
 }
 
-func TestCastMaxUint32(t *testing.T) {
+func TestCastMaxUint32Ptr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := uint32(math.MaxUint32)
-	bs := FromUint32(want, alloc)
-	got := ToUint32(bs)
+	bs := FromUint32Ptr(&want, alloc)
+	var got uint32
+	ToUint32Ptr(bs, &got)
 	if got != want {
 		t.Fatalf("want %d got %d", want, got)
-	}
-}
-
-func TestCastFloat64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := float64(123)
-	bs := FromFloat64(want, alloc)
-	got := ToFloat64(bs)
-	if got != want {
-		t.Fatalf("want %f got %f", want, got)
 	}
 }
 
@@ -170,16 +137,6 @@ func TestCastFloat64BitsPtr(t *testing.T) {
 	var gotu uint64
 	ToFloat64BitsPtr(bs, &gotu)
 	got := math.Float64frombits(gotu)
-	if got != want {
-		t.Fatalf("want %f got %f", want, got)
-	}
-}
-
-func TestCastMaxFloat64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := float64(math.MaxFloat64)
-	bs := FromFloat64(want, alloc)
-	got := ToFloat64(bs)
 	if got != want {
 		t.Fatalf("want %f got %f", want, got)
 	}
@@ -198,16 +155,6 @@ func TestCastMaxFloat64BitsPtr(t *testing.T) {
 	}
 }
 
-func TestCastSmallestNonzeroFloat64(t *testing.T) {
-	alloc := func(size int) []byte { return make([]byte, size) }
-	want := float64(math.SmallestNonzeroFloat64)
-	bs := FromFloat64(want, alloc)
-	got := ToFloat64(bs)
-	if got != want {
-		t.Fatalf("want %f got %f", want, got)
-	}
-}
-
 func TestCastSmallestNonzeroFloat64BitsPtr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float64(math.SmallestNonzeroFloat64)
@@ -221,41 +168,51 @@ func TestCastSmallestNonzeroFloat64BitsPtr(t *testing.T) {
 	}
 }
 
-func TestCastFloat32(t *testing.T) {
+func TestCastFloat32BitsPtr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float32(123)
-	bs := FromFloat32(want, alloc)
-	got := ToFloat32(bs)
+	u := math.Float32bits(want)
+	bs := FromFloat32BitsPtr(&u, alloc)
+	var gotu uint32
+	ToFloat32BitsPtr(bs, &gotu)
+	got := math.Float32frombits(gotu)
 	if got != want {
 		t.Fatalf("want %f got %f", want, got)
 	}
 }
 
-func TestCastMaxFloat32(t *testing.T) {
+func TestCastMaxFloat32BitsPtr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float32(math.MaxFloat32)
-	bs := FromFloat32(want, alloc)
-	got := ToFloat32(bs)
+	u := math.Float32bits(want)
+	bs := FromFloat32BitsPtr(&u, alloc)
+	var gotu uint32
+	ToFloat32BitsPtr(bs, &gotu)
+	got := math.Float32frombits(gotu)
 	if got != want {
 		t.Fatalf("want %f got %f", want, got)
 	}
 }
 
-func TestCastSmallestNonzeroFloat32(t *testing.T) {
+func TestCastSmallestNonzeroFloat32BitsPtr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := float32(math.SmallestNonzeroFloat32)
-	bs := FromFloat32(want, alloc)
-	got := ToFloat32(bs)
+	u := math.Float32bits(want)
+	bs := FromFloat32BitsPtr(&u, alloc)
+	var gotu uint32
+	ToFloat32BitsPtr(bs, &gotu)
+	got := math.Float32frombits(gotu)
 	if got != want {
 		t.Fatalf("want %f got %f", want, got)
 	}
 }
 
-func TestCastString(t *testing.T) {
+func TestCastStringPtr(t *testing.T) {
 	alloc := func(size int) []byte { return make([]byte, size) }
 	want := "abc"
-	bs := FromString(want, alloc)
-	got := ToString(bs)
+	bs := FromStringPtr(&want, alloc)
+	var got string
+	ToStringPtr(bs, &got)
 	if got != want {
 		t.Fatalf("want %s got %s", want, got)
 	}
