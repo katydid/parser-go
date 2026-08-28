@@ -30,16 +30,17 @@ type l struct {
 	name string
 	p    parse.ParserWithInit
 	l    Logger
+	val  []byte
 }
 
 // WrapParserWithInit returns a ParserWithInit that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParserWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWithInit {
-	return &l{"parser", p, newLogger(newOptions(opts...))}
+	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
 }
 
 // WrapParser returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParser(p parse.Parser, opts ...Option) parse.Parser {
-	return &l{"parser", parse.WithNoopInit(p), newLogger(newOptions(opts...))}
+	return &l{"parser", parse.WithNoopInit(p), newLogger(newOptions(opts...)), nil}
 }
 
 func (l *l) Init(buf []byte) {
@@ -61,12 +62,8 @@ func (l *l) Skip() error {
 
 func (l *l) Token() (parse.Kind, []byte, error) {
 	kind, val, err := l.p.Token()
-	val = bytes.Clone(val)
-	tok, tokerr := hedge.NewToken(kind, val, err)
-	if tokerr != nil {
-		l.l.Printf("%s.Token() (%v, %v, %v) hedge.NewToken() (%v)", l.name, kind, val, err, tokerr)
-	} else {
-		l.l.Printf("%s.Token() (%v, %v, %v)", l.name, kind, tok, err)
-	}
-	return kind, val, err
+	l.val = bytes.Clone(val)
+	s := hedge.TokenString(kind, l.val)
+	l.l.Printf("%s.Token() (%v, %v, %v)", l.name, kind, s, err)
+	return kind, l.val, err
 }

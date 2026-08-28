@@ -16,6 +16,7 @@ package hedge
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"math"
 	"time"
@@ -89,6 +90,36 @@ func (t Token) String() string {
 		return fmt.Sprintf("%v", t.s)
 	case parse.TagKind:
 		return fmt.Sprintf("%v", t.s)
+	case parse.UnknownKind:
+		return "<unknown kind>"
+	}
+	panic("unreachable")
+}
+
+func TokenString(kind parse.Kind, bs []byte) string {
+	switch kind {
+	case parse.NullKind:
+		return fmt.Sprintf("%v", nil)
+	case parse.FalseKind:
+		return fmt.Sprintf("%v", false)
+	case parse.TrueKind:
+		return fmt.Sprintf("%v", true)
+	case parse.BytesKind:
+		return fmt.Sprintf("%v", bs)
+	case parse.StringKind:
+		return fmt.Sprintf("%v", string(bs))
+	case parse.Int64Kind:
+		return fmt.Sprintf("%v", int64(binary.LittleEndian.Uint64(bs)))
+	case parse.Float64Kind:
+		return fmt.Sprintf("%v", math.Float64frombits(binary.LittleEndian.Uint64(bs)))
+	case parse.DecimalKind:
+		return fmt.Sprintf("%v", string(bs))
+	case parse.NanosecondsKind:
+		return fmt.Sprintf("%v", int64(binary.LittleEndian.Uint64(bs)))
+	case parse.DateTimeKind:
+		return fmt.Sprintf("%v", string(bs))
+	case parse.TagKind:
+		return fmt.Sprintf("%v", string(bs))
 	case parse.UnknownKind:
 		return "<unknown kind>"
 	}
