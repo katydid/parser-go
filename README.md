@@ -9,7 +9,6 @@ This includes tools for developing implementations of the parser interface, for 
 * [JSON](https://git.katydid.org.za/parser-go-json)
 * [Protobufs](https://git.katydid.org.za/parser-go-proto)
 * [XML](https://git.katydid.org.za/parser-go-xml)
-* [YAML](https://git.katydid.org.za/parser-go-yaml)
 * [Reflect](https://git.katydid.org.za/parser-go-reflect)
 
 ## Using the parser
