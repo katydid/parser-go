@@ -106,7 +106,10 @@ func ToStringPtr(buf []byte, v *string) {
 
 // FromStringPtr uses unsafe to cast from a string to a slice of byte.
 func FromStringPtr(s *string, _alloc func(size int) []byte) []byte {
-	return unsafeBetBytesClassic(s)
+	return *(*[]byte)(unsafe.Pointer(&struct {
+		string
+		int
+	}{*s, len(*s)}))
 }
 
 func unsafeBetBytesClassic(s *string) []byte {
