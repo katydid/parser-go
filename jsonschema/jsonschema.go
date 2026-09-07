@@ -15,7 +15,7 @@
 package jsonschema
 
 // JSONSchemaAble is an extra method for a Parser that distinguishes between objects and arrays.
-// This allows the Parser to tagged to handle JSONSchema `{"type": "object"}` and `{"type":"array"}`.
+// This allows the Parser to be tagged to handle JSONSchema's `{"type": "object"}` and `{"type":"array"}` operators.
 // Tagging is actually added using the `tag` package, this interface only makes tagging possible.
 type JSONSchemaAble interface {
 	// JSONSchemaType returns a type that distinguishes between arrays and objects, after Next returned an EnterHint.
