@@ -12,14 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package tag
+package jsonschema
 
 import (
 	"fmt"
 	"io"
 
 	"katydid.org.za/go/parser-go/cast"
-	"katydid.org.za/go/parser-go/jsonschema"
 	"katydid.org.za/go/parser-go/parse"
 )
 
@@ -30,7 +29,7 @@ type Parser interface {
 
 type JSONSchemaAbleParser interface {
 	parse.Parser
-	jsonschema.JSONSchemaAble
+	JSONSchemaAble
 	Reset()
 }
 
@@ -84,10 +83,10 @@ func (t *tagger) nextStart(h parse.Hint) (parse.Hint, error) {
 		switch h {
 		case parse.EnterHint:
 			switch t.p.JSONSchemaType() {
-			case jsonschema.JSONSchemaTypeArray:
+			case JSONSchemaTypeArray:
 				t.down(arrayTagOpenState)
 				return parse.EnterHint, nil
-			case jsonschema.JSONSchemaTypeObject:
+			case JSONSchemaTypeObject:
 				t.down(objectTagOpenState)
 				return parse.EnterHint, nil
 			}
@@ -102,10 +101,10 @@ func (t *tagger) nextStart(h parse.Hint) (parse.Hint, error) {
 		switch h {
 		case parse.EnterHint:
 			switch t.p.JSONSchemaType() {
-			case jsonschema.JSONSchemaTypeArray:
+			case JSONSchemaTypeArray:
 				t.down(arrayTagIndexState)
 				return parse.EnterHint, nil
-			case jsonschema.JSONSchemaTypeObject:
+			case JSONSchemaTypeObject:
 				t.down(startState)
 				return parse.EnterHint, nil
 			}
@@ -120,10 +119,10 @@ func (t *tagger) nextStart(h parse.Hint) (parse.Hint, error) {
 		switch h {
 		case parse.EnterHint:
 			switch t.p.JSONSchemaType() {
-			case jsonschema.JSONSchemaTypeArray:
+			case JSONSchemaTypeArray:
 				t.down(startState)
 				return parse.EnterHint, nil
-			case jsonschema.JSONSchemaTypeObject:
+			case JSONSchemaTypeObject:
 				t.down(startState)
 				return parse.EnterHint, nil
 			}

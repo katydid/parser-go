@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-package tag_test
+package jsonschema_test
 
 import (
 	"strings"
@@ -22,12 +22,11 @@ import (
 	. "katydid.org.za/go/parser-go/hedge"
 	"katydid.org.za/go/parser-go/jsonschema"
 	"katydid.org.za/go/parser-go/parse"
-	"katydid.org.za/go/parser-go/tag"
 )
 
 func TestTaggerWithTagsAndIndexes(t *testing.T) {
 	j := NewJSONSchemaAbleParser(JSONSchemaAbleHedge)
-	p := tag.NewTagger(j, tag.WithTags(), tag.WithIndexes())
+	p := jsonschema.NewTagger(j, jsonschema.WithTags(), jsonschema.WithIndexes())
 	expect.Hint(t, p, parse.EnterHint)
 
 	expect.Hint(t, p, parse.FieldHint)
@@ -97,7 +96,7 @@ func TestTaggerWithTagsAndIndexes(t *testing.T) {
 
 func TestTaggerWithIndexes(t *testing.T) {
 	j := NewJSONSchemaAbleParser(JSONSchemaAbleHedge)
-	p := tag.NewTagger(j, tag.WithIndexes())
+	p := jsonschema.NewTagger(j, jsonschema.WithIndexes())
 	expect.Hint(t, p, parse.EnterHint)
 
 	expect.Hint(t, p, parse.FieldHint)
@@ -152,7 +151,7 @@ func TestTaggerWithIndexes(t *testing.T) {
 
 func TestTaggerParseInto(t *testing.T) {
 	j := NewJSONSchemaAbleParser(JSONSchemaAbleHedge)
-	p := tag.NewTagger(j, tag.WithIndexes())
+	p := jsonschema.NewTagger(j, jsonschema.WithIndexes())
 	got, err := ParseInto(p)
 	if err != nil {
 		t.Fatal(err)
@@ -192,11 +191,11 @@ var OutputIndexes = Hedge{
 }
 
 type parser struct {
-	p    tag.Parser
+	p    jsonschema.Parser
 	prev string
 }
 
-func NewJSONSchemaAbleParser(h Hedge) tag.JSONSchemaAbleParser {
+func NewJSONSchemaAbleParser(h Hedge) jsonschema.JSONSchemaAbleParser {
 	return &parser{p: NewParser(h), prev: "object"}
 }
 
