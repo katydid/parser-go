@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package jsonschema
+package relaxng
 
-// JSONSchemaAble is an extra method for a Parser that distinguishes between objects and arrays.
-// This allows the Parser to be tagged to handle JSONSchema's `{"type": "object"}` and `{"type":"array"}` operators.
-type JSONSchemaAble interface {
-	// JSONSchemaType returns a type that distinguishes between arrays and objects, after Next returned an EnterHint.
-	JSONSchemaType() JSONSchemaType
+// RelaxNGable is an extra method for a Parser that distinguishes between elements and attributes.
+// This allows the Parser to be tagged to handle RelaxNG's `<element ...>` and `<attribute ...>` operators.
+type RelaxNGable interface {
+	// RelaxNGType returns a type that distinguishes between elements and attributes, after Next returned a FieldHint.
+	RelaxNGType() RelaxNGType
 }
 
-type JSONSchemaType byte
+type RelaxNGType byte
 
-const JSONSchemaTypeUnknown = JSONSchemaType(0)
+const RelaxNGTypeUnknown = RelaxNGType(0)
 
-const JSONSchemaTypeObject = JSONSchemaType('{')
+const RelaxNGTypeElem = RelaxNGType('e')
 
-const JSONSchemaTypeArray = JSONSchemaType('[')
+const RelaxNGTypeAttr = RelaxNGType('a')

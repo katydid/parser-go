@@ -12,26 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package jsonschema
+package relaxng
 
 // Option is used set options when creating a new JSON Parser.
 type Option func(*tagger)
 
 // WithTags tags
-// 1. each object with an object key, for example `{"a": null}` is parsed as `{"object": {"a": null}}`.
-// 2. each array with an array key, for example `{"a": []}` is parsed as `{"a": {"array": []}}`.
+// 1. elements with an `elems` tag, for example `<a/><b/>` is parsed as `{"elems": {"a": {}, "b": {}}}`.
+// 2. attributes with an `attrs` tag, for example `<A a="b" c="d"/>` is parsed as `{"elems": {"A": {"attrs": {"a": "b", "c": "d"}}}}`.
 func WithTags() Option {
 	return func(t *tagger) {
 		t.tag = true
-	}
-}
-
-// WithIndexes tags each array item with an index:
-// for example `["a", "b"]` is parsed as `[0: "a", 1: "b"]`.
-// Requires WithTags to also be passed as an option.
-func WithIndexes() Option {
-	return func(t *tagger) {
-		t.index = true
 	}
 }
 

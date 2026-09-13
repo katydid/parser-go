@@ -71,7 +71,7 @@ func NewTagger(p JSONSchemaAbleParser, opts ...Option) Parser {
 func (t *tagger) Reset() {
 	// Reset the state.
 	t.state = state{}
-	// Shrink the stack's length, but keep it's capacity,
+	// Shrink the stack's length, but keep its capacity,
 	// so we can reuse it on the next parse.
 	t.stack = t.stack[:0]
 	// Reset the parser too.
@@ -144,7 +144,7 @@ func (t *tagger) Next() (parse.Hint, error) {
 		if err != nil {
 			return parse.UnknownHint, err
 		}
-		// helps to skip over object values
+		// Help to skip over object values.
 		t.state.hint = h
 		return t.nextStart(h)
 	case objectTagOpenState:
@@ -250,7 +250,7 @@ func (t *tagger) Skip() error {
 	case arrayTagElemState:
 		t.state.kind = arrayTagIndexState
 		if t.state.hint == parse.ValueHint {
-			// values do not need to be skipped, Next will take care of it.
+			// Values do not need to be skipped, Next will take care of it.
 			return nil
 		}
 		return t.p.Skip()
