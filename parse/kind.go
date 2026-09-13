@@ -14,6 +14,11 @@
 
 package parse
 
+import (
+	"fmt"
+	"strconv"
+)
+
 // Kind of the token that is parsed.
 // This is represented by one for following bytes:
 // * '_': Null (Null)
@@ -129,4 +134,44 @@ func (k Kind) String() string {
 		return "tag"
 	}
 	panic("unreachable")
+}
+
+func (k Kind) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.Quote(k.String())), nil
+}
+
+func (k *Kind) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	switch s {
+	case "unknown":
+		*k = UnknownKind
+	case "null":
+		*k = NullKind
+	case "false":
+		*k = FalseKind
+	case "true":
+		*k = TrueKind
+	case "bytes":
+		*k = BytesKind
+	case "string":
+		*k = StringKind
+	case "int64":
+		*k = Int64Kind
+	case "float64":
+		*k = Float64Kind
+	case "decimal":
+		*k = DecimalKind
+	case "nanoseconds":
+		*k = NanosecondsKind
+	case "dateTime":
+		*k = DateTimeKind
+	case "tag":
+		*k = TagKind
+	default:
+		return fmt.Errorf("unknown kind %v", s)
+	}
+	return nil
 }

@@ -17,13 +17,14 @@ package hedge
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // Node is a type that represents a node in a tree.
-// It has a label an children nodes.
+// It has a Label and Children list of Nodes (Hedge).
 type Node struct {
-	Label    Token
-	Children Hedge
+	Label    Token `json:"Label"`
+	Children Hedge `json:"Children,omitempty"`
 }
 
 // String returns a string representation of Node.
@@ -97,23 +98,97 @@ func (h Hedge) VerboseEqual(g Hedge) error {
 	return nil
 }
 
-// Field is a helper function for creating a Node with a label and one child label.
+// @deprecated Field is a helper function for creating a Node with a label and one child label.
 // This is how a field with a value is typically represented.
 func Field(name string, value string) Node {
+	return NewStringNode(name, NewStringNode(value))
+}
+
+// @deprecated Nested is a helper function for creating a Node.
+func Nested(name string, fs ...Node) Node {
+	return NewStringNode(name, fs...)
+}
+
+func NewUnknownNode(children ...Node) Node {
 	return Node{
-		Label: NewStringToken(name),
-		Children: Hedge{
-			Node{
-				Label: NewStringToken(value),
-			},
-		},
+		Label:    NewUnknownToken(),
+		Children: children,
 	}
 }
 
-// Nested is a helper function for creating a Node.
-func Nested(name string, fs ...Node) Node {
+func NewNullNode(children ...Node) Node {
 	return Node{
-		Label:    NewStringToken(name),
-		Children: Hedge(fs),
+		Label:    NewNullToken(),
+		Children: children,
+	}
+}
+
+func NewFalseNode(children ...Node) Node {
+	return Node{
+		Label:    NewFalseToken(),
+		Children: children,
+	}
+}
+
+func NewTrueNode(children ...Node) Node {
+	return Node{
+		Label:    NewTrueToken(),
+		Children: children,
+	}
+}
+
+func NewBytesNode(b []byte, children ...Node) Node {
+	return Node{
+		Label:    NewBytesToken(b),
+		Children: children,
+	}
+}
+
+func NewStringNode(s string, children ...Node) Node {
+	return Node{
+		Label:    NewStringToken(s),
+		Children: children,
+	}
+}
+
+func NewInt64Node(i int64, children ...Node) Node {
+	return Node{
+		Label:    NewInt64Token(i),
+		Children: children,
+	}
+}
+
+func NewFloat64Node(f float64, children ...Node) Node {
+	return Node{
+		Label:    NewFloat64Token(f),
+		Children: children,
+	}
+}
+
+func NewDecimalNode(d string, children ...Node) Node {
+	return Node{
+		Label:    NewDecimalToken(d),
+		Children: children,
+	}
+}
+
+func NewNanosecondsNode(n int64, children ...Node) Node {
+	return Node{
+		Label:    NewNanosecondsToken(n),
+		Children: children,
+	}
+}
+
+func NewDateTimeNode(v time.Time, children ...Node) Node {
+	return Node{
+		Label:    NewDateTimeToken(v),
+		Children: children,
+	}
+}
+
+func NewTagNode(v string, children ...Node) Node {
+	return Node{
+		Label:    NewTagToken(v),
+		Children: children,
 	}
 }

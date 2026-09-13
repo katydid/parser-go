@@ -16,9 +16,12 @@ package hedge
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"math"
+	"strconv"
 	"time"
 
 	"katydid.org.za/go/parser-go/cast"
@@ -38,6 +41,8 @@ func (t Token) Equal(u Token) bool {
 		return false
 	}
 	switch t.kind {
+	case parse.UnknownKind:
+		return true
 	case parse.NullKind:
 		return true
 	case parse.FalseKind:
@@ -60,14 +65,14 @@ func (t Token) Equal(u Token) bool {
 		return t.s == u.s
 	case parse.TagKind:
 		return t.s == u.s
-	case parse.UnknownKind:
-		return true
 	}
 	panic("unreachable")
 }
 
 func (t Token) String() string {
 	switch t.kind {
+	case parse.UnknownKind:
+		return "<unknown kind>"
 	case parse.NullKind:
 		return fmt.Sprintf("%v", nil)
 	case parse.FalseKind:
@@ -75,7 +80,7 @@ func (t Token) String() string {
 	case parse.TrueKind:
 		return fmt.Sprintf("%v", true)
 	case parse.BytesKind:
-		return fmt.Sprintf("%v", t.b)
+		return base64.StdEncoding.EncodeToString(t.b)
 	case parse.StringKind:
 		return fmt.Sprintf("%v", t.s)
 	case parse.Int64Kind:
@@ -90,14 +95,14 @@ func (t Token) String() string {
 		return fmt.Sprintf("%v", t.s)
 	case parse.TagKind:
 		return fmt.Sprintf("%v", t.s)
-	case parse.UnknownKind:
-		return "<unknown kind>"
 	}
 	panic("unreachable")
 }
 
 func TokenString(kind parse.Kind, bs []byte) string {
 	switch kind {
+	case parse.UnknownKind:
+		return "<unknown kind>"
 	case parse.NullKind:
 		return fmt.Sprintf("%v", nil)
 	case parse.FalseKind:
@@ -105,7 +110,7 @@ func TokenString(kind parse.Kind, bs []byte) string {
 	case parse.TrueKind:
 		return fmt.Sprintf("%v", true)
 	case parse.BytesKind:
-		return fmt.Sprintf("%v", bs)
+		return base64.StdEncoding.EncodeToString(bs)
 	case parse.StringKind:
 		return fmt.Sprintf("%v", string(bs))
 	case parse.Int64Kind:
@@ -120,51 +125,125 @@ func TokenString(kind parse.Kind, bs []byte) string {
 		return fmt.Sprintf("%v", string(bs))
 	case parse.TagKind:
 		return fmt.Sprintf("%v", string(bs))
-	case parse.UnknownKind:
-		return "<unknown kind>"
 	}
 	panic("unreachable")
 }
 
+type jsonToken struct {
+	Kind  parse.Kind
+	Value string `json:",omitempty"`
+}
+
+func (t Token) MarshalJSON() ([]byte, error) {
+	j := &jsonToken{
+		Kind: t.kind,
+	}
+	switch t.kind {
+	case parse.UnknownKind:
+	case parse.NullKind:
+	case parse.FalseKind:
+	case parse.TrueKind:
+	case parse.BytesKind:
+		j.Value = base64.StdEncoding.EncodeToString(t.b)
+	case parse.StringKind:
+		j.Value = t.s
+	case parse.Int64Kind:
+		j.Value = fmt.Sprintf("%d", t.i)
+	case parse.Float64Kind:
+		j.Value = fmt.Sprintf("%f", math.Float64frombits(t.u))
+	case parse.DecimalKind:
+		j.Value = t.s
+	case parse.NanosecondsKind:
+		j.Value = fmt.Sprintf("%d", t.i)
+	case parse.DateTimeKind:
+		j.Value = t.s
+	case parse.TagKind:
+		j.Value = t.s
+	default:
+		return nil, fmt.Errorf("unknown kind %v", j.Kind)
+	}
+	return json.Marshal(j)
+}
+
+func (t *Token) UnmarshalJSON(data []byte) error {
+	j := &jsonToken{}
+	if err := json.Unmarshal(data, j); err != nil {
+		return err
+	}
+	t.kind = j.Kind
+	switch j.Kind {
+	case parse.UnknownKind:
+	case parse.NullKind:
+	case parse.FalseKind:
+	case parse.TrueKind:
+	case parse.BytesKind:
+		bs, err := base64.StdEncoding.DecodeString(j.Value)
+		if err != nil {
+			return err
+		}
+		t.b = bs
+	case parse.StringKind:
+		t.s = j.Value
+	case parse.Int64Kind:
+		i, err := strconv.ParseInt(j.Value, 10, 64)
+		if err != nil {
+			return err
+		}
+		t.i = i
+	case parse.Float64Kind:
+		f, err := strconv.ParseFloat(j.Value, 64)
+		if err != nil {
+			return err
+		}
+		t.u = math.Float64bits(f)
+	case parse.DecimalKind:
+		t.s = j.Value
+	case parse.NanosecondsKind:
+		i, err := strconv.ParseInt(j.Value, 10, 64)
+		if err != nil {
+			return err
+		}
+		t.i = i
+	case parse.DateTimeKind:
+		t.s = j.Value
+	case parse.TagKind:
+		t.s = j.Value
+	default:
+		return fmt.Errorf("unknown kind %v", j.Kind)
+	}
+
+	return nil
+}
+
 func NewToken(kind parse.Kind, b []byte, err error) (Token, error) {
 	if err != nil {
-		return NewUknownToken(), err
+		return NewUnknownToken(), err
 	}
 	t := &Token{kind: kind, b: b}
 	switch kind {
 	case parse.UnknownKind:
-		return *t, nil
 	case parse.NullKind:
-		return *t, nil
 	case parse.FalseKind:
-		return *t, nil
 	case parse.TrueKind:
-		return *t, nil
 	case parse.BytesKind:
-		return *t, nil
 	case parse.StringKind:
 		cast.ToStringPtr(t.b, &t.s)
-		return *t, nil
 	case parse.Int64Kind:
 		cast.ToInt64Ptr(t.b, &t.i)
-		return *t, nil
 	case parse.Float64Kind:
 		cast.ToFloat64BitsPtr(t.b, &t.u)
-		return *t, nil
 	case parse.DecimalKind:
 		cast.ToStringPtr(t.b, &t.s)
-		return *t, nil
 	case parse.NanosecondsKind:
 		cast.ToInt64Ptr(t.b, &t.i)
-		return *t, nil
 	case parse.DateTimeKind:
 		cast.ToStringPtr(t.b, &t.s)
-		return *t, nil
 	case parse.TagKind:
 		cast.ToStringPtr(t.b, &t.s)
-		return *t, nil
+	default:
+		panic("unreachable")
 	}
-	panic("unreachable")
+	return *t, nil
 }
 
 func (t *Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
@@ -197,7 +276,7 @@ func (t *Token) Token(alloc func(size int) []byte) (parse.Kind, []byte, error) {
 	panic("unreachable")
 }
 
-func NewUknownToken() Token {
+func NewUnknownToken() Token {
 	return Token{
 		kind: parse.UnknownKind,
 	}
@@ -257,7 +336,7 @@ func NewFloat64Token(f float64) Token {
 	return *t
 }
 
-func NewDecimalKind(d string) Token {
+func NewDecimalToken(d string) Token {
 	t := &Token{
 		kind: parse.DecimalKind,
 		s:    d,
