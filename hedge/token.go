@@ -170,44 +170,51 @@ func (t *Token) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, j); err != nil {
 		return err
 	}
-	t.kind = j.Kind
 	switch j.Kind {
 	case parse.UnknownKind:
+		*t = NewUnknownToken()
 	case parse.NullKind:
+		*t = NewNullToken()
 	case parse.FalseKind:
+		*t = NewFalseToken()
 	case parse.TrueKind:
+		*t = NewTrueToken()
 	case parse.BytesKind:
 		bs, err := base64.StdEncoding.DecodeString(j.Value)
 		if err != nil {
 			return err
 		}
-		t.b = bs
+		*t = NewBytesToken(bs)
 	case parse.StringKind:
-		t.s = j.Value
+		*t = NewStringToken(j.Value)
 	case parse.Int64Kind:
 		i, err := strconv.ParseInt(j.Value, 10, 64)
 		if err != nil {
 			return err
 		}
-		t.i = i
+		*t = NewInt64Token(i)
 	case parse.Float64Kind:
 		f, err := strconv.ParseFloat(j.Value, 64)
 		if err != nil {
 			return err
 		}
-		t.u = math.Float64bits(f)
+		*t = NewFloat64Token(f)
 	case parse.DecimalKind:
-		t.s = j.Value
+		*t = NewDecimalToken(j.Value)
 	case parse.NanosecondsKind:
 		i, err := strconv.ParseInt(j.Value, 10, 64)
 		if err != nil {
 			return err
 		}
-		t.i = i
+		*t = NewNanosecondsToken(i)
 	case parse.DateTimeKind:
-		t.s = j.Value
+		tim, err := time.Parse(time.RFC3339Nano, j.Value)
+		if err != nil {
+			return err
+		}
+		*t = NewDateTimeToken(tim)
 	case parse.TagKind:
-		t.s = j.Value
+		*t = NewTagToken(j.Value)
 	default:
 		return fmt.Errorf("unknown kind %v", j.Kind)
 	}

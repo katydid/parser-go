@@ -15,45 +15,26 @@
 package hedge
 
 import (
+	"encoding/json"
 	"testing"
 
 	"katydid.org.za/go/parser-go/expect"
 	"katydid.org.za/go/parser-go/parse"
 )
 
-func TestParseFloat64(t *testing.T) {
-	n := NewStringNode("num", NewFloat64Node(3.14))
-
-	var p parse.Parser = NewParser([]Node{n})
+func TestJSONUnmarshal(t *testing.T) {
+	str := `[{"Label":{"Kind":"string","Value":"A"},"Children":[{"Label":{"Kind":"string","Value":"B"}}]}]`
+	h := Hedge{}
+	if err := json.Unmarshal([]byte(str), &h); err != nil {
+		t.Fatal(err)
+	}
+	t.Log(h.String())
+	p := NewParser(h)
 	expect.Hint(t, p, parse.EnterHint)
-
 	expect.Hint(t, p, parse.FieldHint)
-	expect.String(t, p, "num")
-
+	expect.String(t, p, "A")
 	expect.Hint(t, p, parse.ValueHint)
-	expect.Float(t, p, 3.14)
-
-	expect.Hint(t, p, parse.LeaveHint)
-	expect.EOF(t, p)
-}
-
-func TestParseInt64(t *testing.T) {
-	n := NewInt64Node(1, NewInt64Node(0, NewInt64Node(123)))
-
-	var p parse.Parser = NewParser([]Node{n})
-	expect.Hint(t, p, parse.EnterHint)
-
-	expect.Hint(t, p, parse.FieldHint)
-	expect.Int(t, p, 1)
-	expect.Hint(t, p, parse.EnterHint)
-
-	expect.Hint(t, p, parse.FieldHint)
-	expect.Int(t, p, 0)
-	expect.Hint(t, p, parse.ValueHint)
-	expect.Int(t, p, 123)
-
-	expect.Hint(t, p, parse.LeaveHint)
-
+	expect.String(t, p, "B")
 	expect.Hint(t, p, parse.LeaveHint)
 	expect.EOF(t, p)
 }
