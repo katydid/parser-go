@@ -17,7 +17,7 @@ package log
 import (
 	"time"
 
-	"katydid.org.za/go/parser-go/logger"
+	"katydid.org.za/go/parser-go/log/logger"
 )
 
 type options struct {

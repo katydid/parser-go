@@ -38,6 +38,11 @@ type ParserWithInit interface {
 	Init([]byte)
 }
 
+type ParserWithReset interface {
+	Parser
+	Reset()
+}
+
 type Token interface {
 	Token() (Kind, []byte, error)
 }

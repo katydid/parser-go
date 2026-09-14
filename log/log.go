@@ -28,7 +28,7 @@ type Logger interface {
 
 type l struct {
 	name string
-	p    parse.ParserWithInit
+	p    parse.Parser
 	l    Logger
 	val  []byte
 }
@@ -38,14 +38,24 @@ func WrapParserWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWith
 	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
 }
 
+// WrapParserWithReset returns a ParserWithReset that when called returns and logs the value returned by the argument parser to the argument logger.
+func WrapParserWithReset(p parse.ParserWithReset, opts ...Option) parse.ParserWithReset {
+	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
+}
+
 // WrapParser returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParser(p parse.Parser, opts ...Option) parse.Parser {
-	return &l{"parser", parse.WithNoopInit(p), newLogger(newOptions(opts...)), nil}
+	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
 }
 
 func (l *l) Init(buf []byte) {
-	l.p.Init(buf)
+	l.p.(parse.ParserWithInit).Init(buf)
 	l.l.Printf("%s.Init(...)", l.name)
+}
+
+func (l *l) Reset() {
+	l.p.(parse.ParserWithReset).Reset()
+	l.l.Printf("%s.Reset()", l.name)
 }
 
 func (l *l) Next() (parse.Hint, error) {
