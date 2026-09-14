@@ -16,64 +16,99 @@ package log
 
 import (
 	"bytes"
+	"path/filepath"
+	"runtime"
+	"strconv"
+	"time"
 
 	"katydid.org.za/go/parser-go/hedge"
 	"katydid.org.za/go/parser-go/parse"
 )
 
-// Logger is an interface for a type that is made to log debug info.
-type Logger interface {
-	Printf(format string, v ...any)
-}
-
 type l struct {
-	name string
-	p    parse.Parser
-	l    Logger
-	val  []byte
+	name        string
+	parser      parse.Parser
+	printer     printer
+	delay       *time.Duration
+	lineNumbers bool
+	token       []byte
 }
 
 // WrapParserWithInit returns a ParserWithInit that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParserWithInit(p parse.ParserWithInit, opts ...Option) parse.ParserWithInit {
-	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
+	o := newOptions(opts...)
+	return &l{name: o.name, parser: p, printer: newPrinter(o.writer), delay: o.delay, lineNumbers: o.lineNumbers, token: nil}
 }
 
 // WrapParserWithReset returns a ParserWithReset that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParserWithReset(p parse.ParserWithReset, opts ...Option) parse.ParserWithReset {
-	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
+	o := newOptions(opts...)
+	return &l{name: o.name, parser: p, printer: newPrinter(o.writer), delay: o.delay, lineNumbers: o.lineNumbers, token: nil}
 }
 
 // WrapParser returns a Parser that when called returns and logs the value returned by the argument parser to the argument logger.
 func WrapParser(p parse.Parser, opts ...Option) parse.Parser {
-	return &l{"parser", p, newLogger(newOptions(opts...)), nil}
+	o := newOptions(opts...)
+	return &l{name: o.name, parser: p, printer: newPrinter(o.writer), delay: o.delay, lineNumbers: o.lineNumbers, token: nil}
 }
 
 func (l *l) Init(buf []byte) {
-	l.p.(parse.ParserWithInit).Init(buf)
-	l.l.Printf("%s.Init(...)", l.name)
+	l.parser.(parse.ParserWithInit).Init(buf)
+	l.Printf("%s.Init(...)", l.name)
 }
 
 func (l *l) Reset() {
-	l.p.(parse.ParserWithReset).Reset()
-	l.l.Printf("%s.Reset()", l.name)
+	l.parser.(parse.ParserWithReset).Reset()
+	l.Printf("%s.Reset()", l.name)
 }
 
 func (l *l) Next() (parse.Hint, error) {
-	hint, err := l.p.Next()
-	l.l.Printf("%s.Next() (%v, %v)", l.name, hint, err)
+	hint, err := l.parser.Next()
+	l.Printf("%s.Next() (%v, %v)", l.name, hint, err)
 	return hint, err
 }
 
 func (l *l) Skip() error {
-	err := l.p.Skip()
-	l.l.Printf("%s.Skip() (%v)", l.name, err)
+	err := l.parser.Skip()
+	l.Printf("%s.Skip() (%v)", l.name, err)
 	return err
 }
 
 func (l *l) Token() (parse.Kind, []byte, error) {
-	kind, val, err := l.p.Token()
-	l.val = bytes.Clone(val)
-	s := hedge.TokenString(kind, l.val)
-	l.l.Printf("%s.Token() (%v, %v, %v)", l.name, kind, s, err)
-	return kind, l.val, err
+	kind, val, err := l.parser.Token()
+	l.token = bytes.Clone(val)
+	s := hedge.TokenString(kind, l.token)
+	l.Printf("%s.Token() (%v, %v, %v)", l.name, kind, s, err)
+	return kind, l.token, err
+}
+
+func (l *l) Printf(format string, v ...any) {
+	lineNumber := ""
+	if l.lineNumbers {
+		lineNumber = getLineNumber()
+	}
+	l.printer.Printf(lineNumber+": "+format, v...)
+	if l.delay != nil {
+		time.Sleep(*l.delay)
+	}
+}
+
+func getLineNumber() string {
+	_, thisfile, _, ok := runtime.Caller(0)
+	if !ok {
+		return "<weirdlyunknown>:0"
+	}
+	i := 0
+	for {
+		i++
+		_, file, line, ok := runtime.Caller(i)
+		if !ok {
+			return "<unknown>:" + strconv.Itoa(i)
+		}
+		if file == thisfile {
+			continue
+		}
+		_, name := filepath.Split(file)
+		return name + ":" + strconv.Itoa(line)
+	}
 }

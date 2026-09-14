@@ -23,12 +23,8 @@ import (
 )
 
 func TestParseFloat64(t *testing.T) {
-	n := Node{
-		Label: NewStringToken("num"),
-		Children: []Node{
-			{Label: NewFloat64Token(3.14)},
-		},
-	}
+	n := NewStringNode("num", NewFloat64Node(3.14))
+
 	var p parse.Parser = NewParser([]Node{n})
 	p = WrapParser(p)
 	expect.Hint(t, p, parse.EnterHint)
@@ -46,17 +42,8 @@ func TestParseFloat64(t *testing.T) {
 }
 
 func TestParseInt64(t *testing.T) {
-	n := Node{
-		Label: NewInt64Token(1),
-		Children: []Node{
-			{
-				Label: NewInt64Token(0),
-				Children: []Node{
-					{Label: NewInt64Token(123)},
-				},
-			},
-		},
-	}
+	n := NewInt64Node(1, NewInt64Node(0, NewInt64Node(123)))
+
 	var p parse.Parser = NewParser([]Node{n})
 	expect.Hint(t, p, parse.EnterHint)
 

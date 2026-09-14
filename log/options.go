@@ -15,14 +15,16 @@
 package log
 
 import (
+	"io"
+	"os"
 	"time"
-
-	"katydid.org.za/go/parser-go/log/logger"
 )
 
 type options struct {
 	lineNumbers bool
 	delay       *time.Duration
+	writer      io.Writer
+	name        string
 }
 
 type Option func(*options)
@@ -31,6 +33,8 @@ func newDefaultOptions() *options {
 	return &options{
 		lineNumbers: true,
 		delay:       nil,
+		writer:      os.Stderr,
+		name:        "",
 	}
 }
 
@@ -46,21 +50,22 @@ func WithoutLineNumbers() Option {
 	}
 }
 
+func WithWriter(w io.Writer) Option {
+	return func(o *options) {
+		o.writer = w
+	}
+}
+
+func WithName(n string) Option {
+	return func(o *options) {
+		o.name = n
+	}
+}
+
 func newOptions(opts ...Option) *options {
 	o := newDefaultOptions()
 	for _, opt := range opts {
 		opt(o)
 	}
 	return o
-}
-
-func newLogger(o *options) Logger {
-	logopts := []logger.Option{}
-	if o.lineNumbers {
-		logopts = append(logopts, logger.WithLineNumbers())
-	}
-	if o.delay != nil {
-		logopts = append(logopts, logger.WithDelay(*o.delay))
-	}
-	return logger.New(logopts...)
 }
