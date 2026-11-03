@@ -17,7 +17,7 @@ package tag
 import (
 	"fmt"
 
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 type state struct {

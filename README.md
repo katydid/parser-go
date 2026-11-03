@@ -16,7 +16,7 @@ This includes tools for developing implementations of the parser interface, for 
 If you want to use a parser for you own use case, here is a simple walk function:
 
 ```go
-import "katydid.org.za/go/parser-go/parse"
+import "go.katydid.org.za/parser-go/parse"
 
 func Walk(p parse.Parser) error {
 	for {
@@ -65,10 +65,10 @@ type Parser interface {
 
 This interface allows for the implementation of an online pull based parser.
 That is a parser that lazily parses the input as the methods are called and only parses the input once, without backtracking. 
-Exercising the parser can be done with the [debug.Parse](https://godoc.org/katydid.org.za/go/parser-go/parse/debug#Parse) function. 
+Exercising the parser can be done with the [debug.Parse](https://godoc.org/go.katydid.org.za/parser-go/parse/debug#Parse) function. 
 The `Walk` function also returns some debugging output, which should be useful in the development of your own parser.
 
 Your parser should also be able to handle skipping of some of the input, via the `Skip` method. 
-The [debug.RandomParse](https://godoc.org/katydid.org.za/go/parser-go/parse/debug#RandomParse) function is useful for testing this type of robustness in your parser.
+The [debug.RandomParse](https://godoc.org/go.katydid.org.za/parser-go/parse/debug#RandomParse) function is useful for testing this type of robustness in your parser.
 
 See the [Parser Documentation](https://git.katydid.org.za/parser) for more details.

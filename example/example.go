@@ -15,7 +15,7 @@
 package example
 
 import (
-	. "katydid.org.za/go/parser-go/hedge"
+	. "go.katydid.org.za/parser-go/hedge"
 )
 
 type Example struct {

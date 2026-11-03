@@ -17,9 +17,9 @@ package example
 import (
 	"testing"
 
-	"katydid.org.za/go/parser-go/expect"
-	"katydid.org.za/go/parser-go/hedge"
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/expect"
+	"go.katydid.org.za/parser-go/hedge"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 func TestParse(t *testing.T) {

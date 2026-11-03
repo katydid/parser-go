@@ -21,7 +21,7 @@ import (
 	"math"
 	"testing"
 
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 func Hint(t *testing.T, p parse.Parser, want parse.Hint) {

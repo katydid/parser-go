@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"io"
 
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 type state byte

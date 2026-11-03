@@ -24,8 +24,8 @@ import (
 	"strconv"
 	"time"
 
-	"katydid.org.za/go/parser-go/cast"
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/cast"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 type Token struct {

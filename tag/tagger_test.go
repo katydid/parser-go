@@ -18,11 +18,11 @@ import (
 	"strings"
 	"testing"
 
-	"katydid.org.za/go/parser-go/expect"
-	. "katydid.org.za/go/parser-go/hedge"
-	"katydid.org.za/go/parser-go/jsonschema"
-	"katydid.org.za/go/parser-go/parse"
-	"katydid.org.za/go/parser-go/tag"
+	"go.katydid.org.za/parser-go/expect"
+	. "go.katydid.org.za/parser-go/hedge"
+	"go.katydid.org.za/parser-go/jsonschema"
+	"go.katydid.org.za/parser-go/parse"
+	"go.katydid.org.za/parser-go/tag"
 )
 
 func TestTaggerWithTagsAndIndexes(t *testing.T) {

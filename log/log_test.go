@@ -19,8 +19,8 @@ import (
 	"strings"
 	"testing"
 
-	. "katydid.org.za/go/parser-go/hedge"
-	"katydid.org.za/go/parser-go/parse"
+	. "go.katydid.org.za/parser-go/hedge"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 func TestFilename(t *testing.T) {

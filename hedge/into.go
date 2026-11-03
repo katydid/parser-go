@@ -17,8 +17,8 @@ package hedge
 import (
 	"io"
 
-	"katydid.org.za/go/parser-go/parse"
-	. "katydid.org.za/go/parser-go/rand"
+	"go.katydid.org.za/parser-go/parse"
+	. "go.katydid.org.za/parser-go/rand"
 )
 
 // ParseInto parses through the whole parser in a top down manner and records the values into a Nodes structure.

@@ -17,8 +17,8 @@ package debug
 import (
 	"math"
 
-	"katydid.org.za/go/parser-go/cast"
-	"katydid.org.za/go/parser-go/parse"
+	"go.katydid.org.za/parser-go/cast"
+	"go.katydid.org.za/parser-go/parse"
 )
 
 // These functions are only for debugging purposes, so does not need to be optimized with a pool.
